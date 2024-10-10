@@ -10,13 +10,13 @@ st.title("식물 성장 시뮬레이션")
 st.header("식물 성장 조건 설정")
 
 # 온도 설정
-temperature = st.slider("온도 (°C)", -30, 50, 20)
+temperature = st.slider("온도 (°C)", -10, 40, 20)
 # 수분 공급량 설정
-water_supply = st.slider("수분 공급량 (1: 적음, 10: 많음)", 1, 10, 5)
+water_supply = st.slider("수분 공급량 (1: 적음, 10: 많음)", 1, 10, 6)
 # 햇빛 노출 시간 설정
-sunlight = st.slider("햇빛 노출 시간 (시간)", 0, 24, 12)
+sunlight = st.slider("햇빛 노출 시간 (시간)", 4, 16, 8)
 # CO2 농도 설정
-co2_level = st.slider("CO2 농도 (ppm)", 100, 1000, 400)
+co2_level = st.slider("CO2 농도 (ppm)", 300, 800, 400)
 
 # 선택된 성장 조건에 따른 설명 제공
 st.subheader("선택한 성장 조건")
