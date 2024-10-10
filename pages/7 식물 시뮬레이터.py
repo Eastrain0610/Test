@@ -28,6 +28,9 @@ st.write(f"CO2 농도: {co2_level} ppm")
 st.write(f"빛의 파장: {light_wavelength}")
 
 # 성장 조건에 따른 식물 분석 버튼
+if 'analysis_content' not in st.session_state:
+    st.session_state.analysis_content = ""
+
 analyze_button = st.button("성장 조건에 따른 식물 분석")
 
 if analyze_button:
@@ -59,36 +62,41 @@ if analyze_button:
             max_tokens=1000,
             temperature=0.6
         )
-        content = response['choices'][0]['message']['content'].strip()
-        st.markdown(content)
-
-        # 그림 생성 버튼 (분석 후 표시)
-        generate_image_button = st.button("그림 생성")
-
-        if generate_image_button:
-            st.subheader("그림 생성")
-
-            # 그림 생성을 위한 프롬프트 생성
-            image_prompt = (
-                f"다음 조건에 맞는 식물을 그려주세요:\n"
-                f"- 온도: {temperature}°C\n"
-                f"- 수분 공급량: {water_supply} (1: 적음, 10: 많음)\n"
-                f"- 햇빛 노출 시간: {sunlight}시간\n"
-                f"- CO2 농도: {co2_level} ppm\n"
-                f"- 빛의 파장: {light_wavelength}\n\n"
-                "선택한 성장 조건에 맞는 식물의 형태, 잎의 크기, 열매 등을 포함하여 가상의 식물을 서식지와 함께 그려주세요."
-            )
-
-            # OpenAI의 이미지 생성 모델 사용
-            try:
-                image_response = openai.Image.create(
-                    prompt=image_prompt,
-                    n=1,
-                    size="1024x1024"
-                )
-                image_url = image_response['data'][0]['url']
-                st.image(image_url, caption="성장 조건에 따른 식물 이미지")
-            except Exception as e:
-                st.write(f"이미지 생성 중 오류가 발생했습니다: {e}")
+        st.session_state.analysis_content = response['choices'][0]['message']['content'].strip()
     except Exception as e:
-        st.write(f"API 요청 중 오류가 발생했습니다: {e}")
+        st.session_state.analysis_content = f"API 요청 중 오류가 발생했습니다: {e}"
+
+# 분석 내용 출력
+if st.session_state.analysis_content:
+    st.subheader("내용 분석")
+    st.markdown(st.session_state.analysis_content)
+
+# 그림 생성 버튼 (분석 후 표시)
+if st.session_state.analysis_content:
+    generate_image_button = st.button("그림 생성")
+
+    if generate_image_button:
+        st.subheader("그림 생성")
+
+        # 그림 생성을 위한 프롬프트 생성
+        image_prompt = (
+            f"다음 조건에 맞는 식물을 그려주세요:\n"
+            f"- 온도: {temperature}°C\n"
+            f"- 수분 공급량: {water_supply} (1: 적음, 10: 많음)\n"
+            f"- 햇빛 노출 시간: {sunlight}시간\n"
+            f"- CO2 농도: {co2_level} ppm\n"
+            f"- 빛의 파장: {light_wavelength}\n\n"
+            "선택한 성장 조건에 맞는 식물의 형태, 잎의 크기, 열매 등을 포함하여 가상의 식물을 서식지와 함께 그려주세요."
+        )
+
+        # OpenAI의 이미지 생성 모델 사용
+        try:
+            image_response = openai.Image.create(
+                prompt=image_prompt,
+                n=1,
+                size="1024x1024"
+            )
+            image_url = image_response['data'][0]['url']
+            st.image(image_url, caption="성장 조건에 따른 식물 이미지")
+        except Exception as e:
+            st.write(f"이미지 생성 중 오류가 발생했습니다: {e}")
