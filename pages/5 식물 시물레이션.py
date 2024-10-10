@@ -82,7 +82,7 @@ if analyze_button:
     for key, value in plant_characteristics.items():
         analysis += f"{key}: {value}\n"
 
-    # OpenAI GPT-3.5를 사용하여 내용 분석 생성
+    # OpenAI GPT-3를 사용하여 내용 분석 생성
     try:
         response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
@@ -104,7 +104,8 @@ if analyze_button:
         image_response = openai.Image.create(
             prompt=image_prompt,
             n=1,
-            size="512x512"
+            size="512x512",
+            response_format="url"
         )
         image_url = image_response['data'][0]['url']
         st.image(image_url, caption="성장 조건에 따른 가상 식물 이미지")
