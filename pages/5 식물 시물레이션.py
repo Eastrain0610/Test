@@ -22,12 +22,18 @@ light_wavelength = st.selectbox("빛의 파장 (nm)", ["청색광 (400-500 nm)",
 
 # 선택한 성장 조건 출력
 st.subheader("선택한 성장 조건")
+
 st.write(f"온도: {temperature}°C")
 st.write(f"수분 공급량: {water_supply}")
 st.write(f"햇빛 노출 시간: {sunlight}시간")
 st.write(f"CO2 농도: {co2_level} ppm")
 st.write(f"빛의 파장: {light_wavelength}")
 
+# 성장 조건에 따른 식물 분석 버튼
+analyze_button = st.button("성장 조건에 따른 식물 분석")
+
+if analyze_button and google_api_key:
+    
 # 식물 특성 결정 함수
 def determine_plant_characteristics(temperature, water_supply, sunlight, co2_level, light_wavelength):
     characteristics = {
@@ -73,9 +79,11 @@ def determine_plant_characteristics(temperature, water_supply, sunlight, co2_lev
 # 식물의 특성 결정 및 출력
 plant_characteristics = determine_plant_characteristics(temperature, water_supply, sunlight, co2_level, light_wavelength)
 
-analysis = "조건에 따른 식물의 특성:"
+analysis = "조건에 따른 식물의 특성:
+"
 for key, value in plant_characteristics.items():
-    analysis += f"{key}: {value}"
+    analysis += f"{key}: {value}
+"
 
 # Google Generative Language API를 사용하여 분석
 google_api_key = st.text_input("Google API 키를 입력하세요", type="password")
