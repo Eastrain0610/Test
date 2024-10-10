@@ -54,7 +54,7 @@ if analyze_button:
                 {"role": "system", "content": "You are an assistant that provides detailed explanations about plant growth in Korean based on specific conditions."},
                 {"role": "user", "content": analysis_prompt}
             ],
-            max_tokens=500,
+            max_tokens=1000,
             temperature=0.6
         )
         content = response['choices'][0]['message']['content'].strip()
