@@ -23,14 +23,13 @@ def calculate_similarity(seq1, seq2):
     matches = sum(1 for a, b in zip(seq1, seq2) if a == b)
     return (matches / len(seq1)) * 100
 
-# 외부 데이터베이스에서 서열 가져오기 함수
+# 외부 데이터베이스에서 서열 가져오기 함수 (Gemini API 사용)
 def fetch_sequence(animal_name):
-    # 여기서는 예시로 NCBI의 API를 사용하여 서열을 가져오는 방법을 보여줍니다.
-    # 실제 사용 시에는 적절한 데이터베이스와 API 엔드포인트를 사용해야 합니다.
-    url = f"https://api.example.com/get_sequence?animal={animal_name}"
+    # Gemini API를 사용하여 서열을 가져오는 코드입니다.
+    url = f"https://gemini.example.com/api/v1/sequences?organism={animal_name}"
     response = requests.get(url)
     if response.status_code == 200:
-        return response.text.strip()
+        return response.json().get("sequence", "").strip()
     else:
         st.error("서열을 가져오는 데 실패했습니다. 다시 시도하세요.")
         return None
