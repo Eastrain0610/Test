@@ -105,7 +105,8 @@ if api_key:
         sentiment_magnitude = sentiment_result['documentSentiment']['magnitude']
         st.write(f"분석 결과: 감정 점수 = {sentiment_score}, 감정 강도 = {sentiment_magnitude}")
     else:
-        st.write("API 요청 중 오류가 발생했습니다.")
+        st.write(f"API 요청 중 오류가 발생했습니다. 상태 코드: {response.status_code}")
+        st.write(response.text)
 
 st.write(analysis)
 
