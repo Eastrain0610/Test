@@ -27,14 +27,60 @@ st.write(f"CO2 농도: {co2_level} ppm")
 
 # 조건에 따른 식물 특성 설명 제공
 st.subheader("조건에 따른 식물의 특성")
-if temperature > 30 and water_supply < 5 and sunlight > 12:
-    st.write("이 조건에서는 두꺼운 왁스층을 가진 얇은 잎을 가진 식물이 적합합니다. 수분 손실을 최소화합니다.")
-elif temperature < 0 and water_supply > 5:
-    st.write("이 조건에서는 두꺼운 잎과 낮은 키를 가진 식물이 적합합니다. 추운 환경에서 체온을 유지합니다.")
-elif co2_level > 600:
-    st.write("높은 CO2 농도는 식물의 광합성을 촉진하고 빠른 성장을 돕습니다.")
-else:
-    st.write("이 조건에서는 적당한 크기의 잎과 강한 뿌리를 가진 식물이 적합합니다.")
+
+# 다양한 성장 조건에 따른 결과 설정
+def determine_plant_characteristics(temperature, water_supply, sunlight, co2_level):
+    characteristics = {
+        "잎 크기": "중간",
+        "뿌리 크기": "중간",
+        "꽃 크기": "없음",
+        "열매 상태": "없음"
+    }
+
+    # 조건에 따른 잎 크기 결정
+    if temperature > 30 and water_supply < 5:
+        characteristics["잎 크기"] = "작음 (수분 손실 최소화)"
+    elif temperature < 0:
+        characteristics["잎 크기"] = "두껍고 작음 (추위 보호)"
+    elif co2_level > 600:
+        characteristics["잎 크기"] = "매우 큼 (광합성 촉진)"
+    else:
+        characteristics["잎 크기"] = "중간"
+
+    # 조건에 따른 뿌리 크기 결정
+    if water_supply < 3:
+        characteristics["뿌리 크기"] = "깊음 (물을 찾기 위해)"
+    elif water_supply > 7:
+        characteristics["뿌리 크기"] = "얕음 (수분이 충분함)"
+    else:
+        characteristics["뿌리 크기"] = "중간"
+
+    # 조건에 따른 꽃 크기 결정
+    if temperature > 20 and sunlight > 10 and co2_level > 500:
+        characteristics["꽃 크기"] = "큼 (성장에 적합한 조건)"
+    elif temperature < 10 or sunlight < 5:
+        characteristics["꽃 크기"] = "없음 (불리한 조건)"
+    else:
+        characteristics["꽃 크기"] = "중간"
+
+    # 조건에 따른 열매 상태 결정
+    if temperature > 25 and water_supply > 5 and co2_level > 400:
+        characteristics["열매 상태"] = "잘 자람"
+    elif temperature < 15 or water_supply < 4:
+        characteristics["열매 상태"] = "없음 (불리한 조건)"
+    else:
+        characteristics["열매 상태"] = "중간"
+
+    return characteristics
+
+# 식물의 특성 결정
+plant_characteristics = determine_plant_characteristics(temperature, water_supply, sunlight, co2_level)
+
+# 결과 출력
+st.write(f"잎 크기: {plant_characteristics['잎 크기']}")
+st.write(f"뿌리 크기: {plant_characteristics['뿌리 크기']}")
+st.write(f"꽃 크기: {plant_characteristics['꽃 크기']}")
+st.write(f"열매 상태: {plant_characteristics['열매 상태']}")
 
 # 식물 이미지 생성 (OpenAI API 사용하지 않음)
 st.subheader("식물 이미지 (예시)")
