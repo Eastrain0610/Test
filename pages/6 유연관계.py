@@ -17,6 +17,11 @@ def compare_sequences(seq1, seq2):
             differences.append((i, residue1, residue2))
     return differences
 
+# 일치 비율 계산 함수
+def calculate_similarity(seq1, seq2):
+    matches = sum(1 for a, b in zip(seq1, seq2) if a == b)
+    return (matches / len(seq1)) * 100
+
 # Streamlit UI
 def main():
     st.title("사이토크롬 C 서열 비교: 사람 vs 붉은털 원숭이 vs 닭")
@@ -45,8 +50,10 @@ def main():
     
     # 서열 비교 수행
     differences = compare_sequences(seq1, seq2)
+    similarity = calculate_similarity(seq1, seq2)
     
     # 결과 출력
+    st.write(f"두 서열 간의 일치율: {similarity:.2f}%")
     if differences:
         st.write(f"두 서열 간의 차이점: 총 {len(differences)}개의 차이가 발견되었습니다.")
         for index, residue1, residue2 in differences:
