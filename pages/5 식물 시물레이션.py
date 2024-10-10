@@ -1,4 +1,6 @@
 import streamlit as st
+import requests
+import json
 
 # Streamlit 앱 제목
 st.title("식물 성장 시뮬레이션")
@@ -81,6 +83,29 @@ elif co2_level > 600:
     analysis += "CO2 농도가 높은 환경에서 빠르게 성장할 수 있으며, 광합성이 활발하게 이루어지는 환경에 적합합니다. 이러한 특성을 가진 대표적인 식물로는 고속 성장 나무인 유칼립투스가 있습니다."
 else:
     analysis += "온화한 기후에서 적당한 수분과 햇빛을 필요로 하며, 일반적인 환경에서 잘 자랄 수 있습니다. 이러한 특성을 가진 대표적인 식물로는 민들레와 같은 야생화가 있습니다."
+
+# Google Cloud Natural Language API를 사용하여 분석
+api_key = st.text_input("Google API 키를 입력하세요", type="password")
+if api_key:
+    url = f"https://language.googleapis.com/v1/documents:analyzeSentiment?key={api_key}"
+    headers = {
+        "Content-Type": "application/json"
+    }
+    document = {
+        "document": {
+            "type": "PLAIN_TEXT",
+            "content": analysis
+        },
+        "encodingType": "UTF8"
+    }
+    response = requests.post(url, headers=headers, data=json.dumps(document))
+    if response.status_code == 200:
+        sentiment_result = response.json()
+        sentiment_score = sentiment_result['documentSentiment']['score']
+        sentiment_magnitude = sentiment_result['documentSentiment']['magnitude']
+        st.write(f"분석 결과: 감정 점수 = {sentiment_score}, 감정 강도 = {sentiment_magnitude}")
+    else:
+        st.write("API 요청 중 오류가 발생했습니다.")
 
 st.write(analysis)
 
