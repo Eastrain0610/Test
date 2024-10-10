@@ -83,13 +83,13 @@ if analyze_button:
         response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
             messages=[
-                {"role": "system", "content": "You are a helpful assistant for analyzing plant growth."},
-                {"role": "user", "content": f"Given the following conditions: \n{analysis}\nPlease provide a detailed explanation of the plant's growth response to these conditions."}
+                {"role": "system", "content": "You are an assistant that provides detailed and comprehensive explanations about plant growth based on specific conditions."},
+                {"role": "user", "content": f"Here are the conditions of plant growth:\n{analysis}\nPlease provide a thorough and well-organized explanation of how these conditions affect the plant's growth and characteristics, in a cohesive paragraph."}
             ],
-            max_tokens=200,
-            temperature=0.7
+            max_tokens=300,
+            temperature=0.6
         )
         content = response['choices'][0]['message']['content'].strip()
-        st.write(f"분석 결과: {content}")
+        st.write(f"분석 결과:\n{content}")
     except Exception as e:
         st.write(f"API 요청 중 오류가 발생했습니다: {e}")
