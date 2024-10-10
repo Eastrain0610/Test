@@ -115,7 +115,7 @@ if analyze_button:
                 {"role": "system", "content": "You are an assistant that provides explanations in Korean about plant growth based on specific conditions."},
                 {"role": "user", "content": f"다음은 식물 성장 조건입니다:\n{analysis}\n이 조건들이 식물 성장에 미치는 영향을 자세하게 설명하고, 이 조건들에 맞는 식물의 실제 사례를 한국어로 작성해 주세요. 문장을 자연스럽게 연결하여 하나의 완성된 문단으로 작성해 주세요."}
             ],
-            max_tokens=500,
+            max_tokens=1000,
             temperature=0.6
         )
         content = response['choices'][0]['message']['content'].strip()
