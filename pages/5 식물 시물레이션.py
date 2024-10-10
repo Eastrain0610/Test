@@ -34,7 +34,45 @@ analyze_button = st.button("성장 조건에 따른 식물 분석")
 
 if analyze_button and google_api_key:
     # 식물의 특성 결정 및 분석 결과 생성
-    plant_characteristics = determine_plant_characteristics(temperature, water_supply, sunlight, co2_level, light_wavelength)
+    plant_characteristics = {
+        "잎 크기": "중간",
+        "뿌리 크기": "중간",
+        "꽃 크기": "없음",
+        "열매 상태": "없음"
+    }
+
+    if temperature > 30 and water_supply < 5:
+        plant_characteristics["잎 크기"] = "작음 (수분 손실 최소화)"
+    elif temperature < 0:
+        plant_characteristics["잎 크기"] = "두껍고 작음 (추위 보호)"
+    elif co2_level > 600:
+        plant_characteristics["잎 크기"] = "매우 큼 (광합성 촉진)"
+    
+    if water_supply < 3:
+        plant_characteristics["뿌리 크기"] = "깊음 (물을 찾기 위해)"
+    elif water_supply > 7:
+        plant_characteristics["뿌리 크기"] = "얕음 (수분이 충분함)"
+    
+    if temperature > 20 and sunlight > 10 and co2_level > 500:
+        plant_characteristics["꽃 크기"] = "큼 (성장에 적합한 조건)"
+    elif temperature < 10 or sunlight < 5:
+        plant_characteristics["꽃 크기"] = "없음 (불리한 조건)"
+    
+    if temperature > 25 and water_supply > 5 and co2_level > 400:
+        plant_characteristics["열매 상태"] = "잘 자람"
+    elif temperature < 15 or water_supply < 4:
+        plant_characteristics["열매 상태"] = "없음 (불리한 조건)"
+
+    # 빛의 파장에 따른 특성 결정
+    if light_wavelength == "청색광 (400-500 nm)":
+        plant_characteristics["잎 크기"] = "두껍고 건강함 (청색광에 의한 잎 성장 촉진)"
+    elif light_wavelength == "적색광 (600-700 nm)":
+        plant_characteristics["꽃 크기"] = "큼 (적색광에 의한 개화 촉진)"
+    elif light_wavelength == "혼합광 (청색 + 적색)":
+        plant_characteristics["잎 크기"] = "크고 건강함"
+        plant_characteristics["꽃 크기"] = "큼 (청색 및 적색광의 조화로 전체적인 성장 촉진)"
+
+    # 분석 내용 생성
     analysis = "조건에 따른 식물의 특성:\n"
     for key, value in plant_characteristics.items():
         analysis += f"{key}: {value}\n"
@@ -64,48 +102,6 @@ if analyze_button and google_api_key:
     else:
         st.write(f"API 요청 중 오류가 발생했습니다. 상태 코드: {response.status_code}")
         st.write(response.text)
-
-# 식물 특성 결정 함수
-def determine_plant_characteristics(temperature, water_supply, sunlight, co2_level, light_wavelength):
-    characteristics = {
-        "잎 크기": "중간",
-        "뿌리 크기": "중간",
-        "꽃 크기": "없음",
-        "열매 상태": "없음"
-    }
-
-    if temperature > 30 and water_supply < 5:
-        characteristics["잎 크기"] = "작음 (수분 손실 최소화)"
-    elif temperature < 0:
-        characteristics["잎 크기"] = "두껍고 작음 (추위 보호)"
-    elif co2_level > 600:
-        characteristics["잎 크기"] = "매우 큼 (광합성 촉진)"
-    
-    if water_supply < 3:
-        characteristics["뿌리 크기"] = "깊음 (물을 찾기 위해)"
-    elif water_supply > 7:
-        characteristics["뿌리 크기"] = "얕음 (수분이 충분함)"
-    
-    if temperature > 20 and sunlight > 10 and co2_level > 500:
-        characteristics["꽃 크기"] = "큼 (성장에 적합한 조건)"
-    elif temperature < 10 or sunlight < 5:
-        characteristics["꽃 크기"] = "없음 (불리한 조건)"
-    
-    if temperature > 25 and water_supply > 5 and co2_level > 400:
-        characteristics["열매 상태"] = "잘 자람"
-    elif temperature < 15 or water_supply < 4:
-        characteristics["열매 상태"] = "없음 (불리한 조건)"
-
-    # 빛의 파장에 따른 특성 결정
-    if light_wavelength == "청색광 (400-500 nm)":
-        characteristics["잎 크기"] = "두껍고 건강함 (청색광에 의한 잎 성장 촉진)"
-    elif light_wavelength == "적색광 (600-700 nm)":
-        characteristics["꽃 크기"] = "큼 (적색광에 의한 개화 촉진)"
-    elif light_wavelength == "혼합광 (청색 + 적색)":
-        characteristics["잎 크기"] = "크고 건강함"
-        characteristics["꽃 크기"] = "큼 (청색 및 적색광의 조화로 전체적인 성장 촉진)"
-
-    return characteristics
 
 # 식물 이미지 생성 (OpenAI API 사용하지 않음)
 st.subheader("식물 이미지 (예시)")
