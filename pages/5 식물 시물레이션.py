@@ -104,7 +104,18 @@ if analyze_button:
         st.write(f"API 요청 중 오류가 발생했습니다. 상태 코드: {response.status_code}")
         st.write(response.text)
 
-    # 성장 조건에 따른 식물 이미지 생성
+    # 성장 조건에 따른 식물 이미지 검색
     st.subheader("선택한 성장 조건에 따른 식물 이미지")
-    generated_image_url = "https://via.placeholder.com/512x512.png?text=성장+조건에+따른+가상+식물+이미지"
-    st.image(generated_image_url, caption="성장 조건에 따른 가상 식물 이미지")
+    search_query = "식물 성장 조건에 맞는 식물"
+    search_url = f"https://www.googleapis.com/customsearch/v1?q={search_query}&cx=YOUR_CX_KEY&searchType=image&key={google_api_key}"
+    search_response = requests.get(search_url)
+    if search_response.status_code == 200:
+        search_results = search_response.json()
+        if 'items' in search_results and len(search_results['items']) > 0:
+            image_url = search_results['items'][0]['link']
+        else:
+            image_url = "https://via.placeholder.com/512x512.png?text=이미지+없음"
+    else:
+        image_url = "https://via.placeholder.com/512x512.png?text=API+요청+오류"
+
+    st.image(image_url, caption="선택한 성장 조건에 따른 식물 이미지")
