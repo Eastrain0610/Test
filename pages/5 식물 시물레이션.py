@@ -84,26 +84,20 @@ elif co2_level > 600:
 else:
     analysis += "온화한 기후에서 적당한 수분과 햇빛을 필요로 하며, 일반적인 환경에서 잘 자랄 수 있습니다. 이러한 특성을 가진 대표적인 식물로는 민들레와 같은 야생화가 있습니다."
 
-# Google Cloud Natural Language API를 사용하여 분석
-api_key = st.text_input("Google API 키를 입력하세요", type="password")
+# Gemini API를 사용하여 분석
+api_key = st.text_input("Gemini API 키를 입력하세요", type="password")
 if api_key:
-    url = f"https://language.googleapis.com/v1/documents:analyzeSentiment?key={api_key}"
+    url = f"https://gemini.example.com/analyze?key={api_key}"  # Gemini API의 실제 URL로 변경 필요
     headers = {
         "Content-Type": "application/json"
     }
     document = {
-        "document": {
-            "type": "PLAIN_TEXT",
-            "content": analysis
-        },
-        "encodingType": "UTF8"
+        "text": analysis  # Gemini API가 요구하는 데이터 형식으로 조정 필요
     }
     response = requests.post(url, headers=headers, data=json.dumps(document))
     if response.status_code == 200:
-        sentiment_result = response.json()
-        sentiment_score = sentiment_result['documentSentiment']['score']
-        sentiment_magnitude = sentiment_result['documentSentiment']['magnitude']
-        st.write(f"분석 결과: 감정 점수 = {sentiment_score}, 감정 강도 = {sentiment_magnitude}")
+        gemini_result = response.json()
+        st.write(f"분석 결과: {gemini_result}")
     else:
         st.write(f"API 요청 중 오류가 발생했습니다. 상태 코드: {response.status_code}")
         st.write(response.text)
