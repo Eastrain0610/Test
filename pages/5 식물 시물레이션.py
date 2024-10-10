@@ -35,9 +35,9 @@ analyze_button = st.button("성장 조건에 따른 식물 분석")
 if analyze_button and google_api_key:
     # 식물의 특성 결정 및 분석 결과 생성
     plant_characteristics = determine_plant_characteristics(temperature, water_supply, sunlight, co2_level, light_wavelength)
-    analysis = "조건에 따른 식물의 특성:"
+    analysis = "조건에 따른 식물의 특성:\n"
     for key, value in plant_characteristics.items():
-        analysis += f"{key}: {value}"
+        analysis += f"{key}: {value}\n"
 
     # Google Generative Language API를 사용하여 분석
     url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key={google_api_key}"
@@ -63,7 +63,8 @@ if analyze_button and google_api_key:
             st.write("분석 결과를 처리하는 중 오류가 발생했습니다.")
     else:
         st.write(f"API 요청 중 오류가 발생했습니다. 상태 코드: {response.status_code}")
-        st.write(response.text)    
+        st.write(response.text)
+
 # 식물 특성 결정 함수
 def determine_plant_characteristics(temperature, water_supply, sunlight, co2_level, light_wavelength):
     characteristics = {
@@ -105,39 +106,6 @@ def determine_plant_characteristics(temperature, water_supply, sunlight, co2_lev
         characteristics["꽃 크기"] = "큼 (청색 및 적색광의 조화로 전체적인 성장 촉진)"
 
     return characteristics
-
-analysis = "조건에 따른 식물의 특성:"
-for key, value in plant_characteristics.items():
-    analysis += f"{key}: {value}"
-
-# Google Generative Language API를 사용하여 분석
-google_api_key = st.text_input("Google API 키를 입력하세요", type="password")
-if google_api_key:
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key={google_api_key}"
-    headers = {
-        'Content-Type': 'application/json'
-    }
-    data = {
-        "contents": [
-            {
-                "parts": [
-                    {"text": analysis}
-                ]
-            }
-        ]
-    }
-    response = requests.post(url, headers=headers, data=json.dumps(data))
-    if response.status_code == 200:
-        result = response.json()
-        try:
-            content = result['candidates'][0]['content']['parts'][0]['text']
-            st.write(f"분석 결과: {content}")
-        except KeyError:
-            st.write("분석 결과를 처리하는 중 오류가 발생했습니다.")
-    else:
-        st.write(f"API 요청 중 오류가 발생했습니다. 상태 코드: {response.status_code}")
-        st.write(response.text)
-
 
 # 식물 이미지 생성 (OpenAI API 사용하지 않음)
 st.subheader("식물 이미지 (예시)")
