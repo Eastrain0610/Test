@@ -106,19 +106,5 @@ if analyze_button:
       - **상추**: 혼합광을 통해 잎의 성장이 촉진되며, 상추와 같은 잎채소에 적합함.
     """
 
-    # OpenAI GPT-3.5-turbo 사용하여 분석 요청 및 처리
-    openai.api_key = openai_api_key
-    try:
-        response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
-            messages=[
-                {"role": "system", "content": "You are an assistant that provides explanations in Korean about plant growth based on specific conditions."},
-                {"role": "user", "content": f"다음은 식물 성장 조건입니다:\n{analysis}\n이 조건들이 식물 성장에 미치는 영향을 자세하게 설명하고, 이 조건들에 맞는 식물의 실제 사례를 한국어로 작성해 주세요. 문장을 자연스럽게 연결하여 하나의 완성된 문단으로 작성해 주세요."}
-            ],
-            max_tokens=1000,
-            temperature=0.6
-        )
-        content = response['choices'][0]['message']['content'].strip()
-        st.markdown(content)
-    except Exception as e:
-        st.write(f"API 요청 중 오류가 발생했습니다: {e}")
+    # 화면에 분석 내용 표시
+    st.markdown(analysis)
