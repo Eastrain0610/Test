@@ -82,14 +82,17 @@ if analyze_button:
     for key, value in plant_characteristics.items():
         analysis += f"{key}: {value}\n"
 
-    # OpenAI GPT-3를 사용하여 내용 분석 생성
+    # OpenAI GPT-3.5를 사용하여 내용 분석 생성
     try:
-        response = openai.Completion.create(
-            engine="text-davinci-003",
-            prompt=analysis,
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system", "content": "You are a helpful assistant."},
+                {"role": "user", "content": analysis}
+            ],
             max_tokens=150
         )
-        content = response.choices[0].text.strip()
+        content = response.choices[0].message['content'].strip()
         st.write(f"분석 결과: {content}")
     except Exception as e:
         st.write(f"API 요청 중 오류가 발생했습니다: {e}")
