@@ -35,11 +35,9 @@ analyze_button = st.button("성장 조건에 따른 식물 분석")
 if analyze_button and google_api_key:
     # 식물의 특성 결정 및 분석 결과 생성
     plant_characteristics = determine_plant_characteristics(temperature, water_supply, sunlight, co2_level, light_wavelength)
-    analysis = "조건에 따른 식물의 특성:
-"
+    analysis = "조건에 따른 식물의 특성:"
     for key, value in plant_characteristics.items():
-        analysis += f"{key}: {value}
-"
+        analysis += f"{key}: {value}"
 
     # Google Generative Language API를 사용하여 분석
     url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key={google_api_key}"
