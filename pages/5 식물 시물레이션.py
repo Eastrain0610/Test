@@ -84,15 +84,15 @@ if analyze_button:
 
     # OpenAI GPT-3를 사용하여 내용 분석 생성
     try:
-        response = openai.Completion.create(
-            model="text-davinci-003",
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
             messages=[
                 {"role": "system", "content": "You are a helpful assistant."},
                 {"role": "user", "content": analysis}
             ],
             max_tokens=150
         )
-        content = response['choices'][0]['text'].strip()
+        content = response['choices'][0]['message']['content'].strip()
         st.write(f"분석 결과: {content}")
     except Exception as e:
         st.write(f"API 요청 중 오류가 발생했습니다: {e}")
@@ -103,9 +103,9 @@ if analyze_button:
         image_prompt = f"A plant with the following characteristics: {analysis}"
         image_response = openai.Image.create(
             prompt=image_prompt,
+            n=1,
             size="1024x1024",
-            response_format="url",
-            n=1
+            response_format="url"
         )
         image_url = image_response['data'][0]['url']
         st.image(image_url, caption="성장 조건에 따른 가상 식물 이미지")
