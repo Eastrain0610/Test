@@ -23,14 +23,17 @@ light_wavelength = st.selectbox("빛의 파장 (nm)", ["청색광 (400-500 nm)",
 # 선택한 성장 조건 출력
 st.subheader("선택한 성장 조건")
 
-st.write(f"온도: {temperature}°C")
-st.write(f"수분 공급량: {water_supply}")
-st.write(f"햇빛 노출 시간: {sunlight}시간")
-st.write(f"CO2 농도: {co2_level} ppm")
-st.write(f"빛의 파장: {light_wavelength}")
+st.write(f"<span style='font-size:1em;'>온도: {temperature}°C</span>", unsafe_allow_html=True)
+st.write(f"<span style='font-size:1em;'>수분 공급량: {water_supply}</span>", unsafe_allow_html=True)
+st.write(f"<span style='font-size:1em;'>햇빛 노출 시간: {sunlight}시간</span>", unsafe_allow_html=True)
+st.write(f"<span style='font-size:1em;'>CO2 농도: {co2_level} ppm</span>", unsafe_allow_html=True)
+st.write(f"<span style='font-size:1em;'>빛의 파장: {light_wavelength}</span>", unsafe_allow_html=True)
 
 # 성장 조건에 따른 식물 분석 버튼
 analyze_button = st.button("성장 조건에 따른 식물 분석")
+
+if analyze_button:
+    st.subheader("내용 분석")
 
 if analyze_button and google_api_key:
     # 식물의 특성 결정 및 분석 결과 생성
@@ -96,7 +99,7 @@ if analyze_button and google_api_key:
         result = response.json()
         try:
             content = result['candidates'][0]['content']['parts'][0]['text']
-            st.write(f"분석 결과: {content}")
+            st.write(f"분석 결과: {content}", unsafe_allow_html=True)
         except KeyError:
             st.write("분석 결과를 처리하는 중 오류가 발생했습니다.")
     else:
