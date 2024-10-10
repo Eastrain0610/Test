@@ -1,6 +1,4 @@
 import streamlit as st
-import requests
-import json
 import openai
 
 # Streamlit 앱 제목
@@ -79,16 +77,19 @@ if analyze_button:
     for key, value in plant_characteristics.items():
         analysis += f"{key}: {value}\n"
 
-    # OpenAI GPT-3.5 또는 4를 사용하여 분석
+    # OpenAI GPT-3.5-turbo 사용하여 분석
     openai.api_key = openai_api_key
     try:
-        response = openai.Completion.create(
-            engine="text-davinci-003",
-            prompt=analysis,
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system", "content": "You are a helpful assistant for analyzing plant growth."},
+                {"role": "user", "content": analysis}
+            ],
             max_tokens=100,
             temperature=0.5
         )
-        content = response.choices[0].text.strip()
+        content = response['choices'][0]['message']['content'].strip()
         st.write(f"분석 결과: {content}")
     except Exception as e:
         st.write(f"API 요청 중 오류가 발생했습니다: {e}")
