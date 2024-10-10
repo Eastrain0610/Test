@@ -1,7 +1,4 @@
 import streamlit as st
-from PIL import Image
-from io import BytesIO
-import requests
 
 # Streamlit 앱 제목
 st.title("식물 성장 시뮬레이션")
@@ -9,27 +6,23 @@ st.title("식물 성장 시뮬레이션")
 # 식물 성장 조건 설정
 st.header("식물 성장 조건 설정")
 
-# 온도 설정
+# 성장 조건 슬라이더 설정
 temperature = st.slider("온도 (°C)", -10, 40, 20)
-# 수분 공급량 설정
 water_supply = st.slider("수분 공급량 (1: 적음, 10: 많음)", 1, 10, 6)
-# 햇빛 노출 시간 설정
 sunlight = st.slider("햇빛 노출 시간 (시간)", 4, 16, 8)
-# CO2 농도 설정
 co2_level = st.slider("CO2 농도 (ppm)", 300, 800, 400)
+light_wavelength = st.selectbox("빛의 파장 (nm)", ["청색광 (400-500 nm)", "적색광 (600-700 nm)", "혼합광 (청색 + 적색)"])
 
-# 선택된 성장 조건에 따른 설명 제공
+# 선택한 성장 조건 출력
 st.subheader("선택한 성장 조건")
 st.write(f"온도: {temperature}°C")
 st.write(f"수분 공급량: {water_supply}")
 st.write(f"햇빛 노출 시간: {sunlight}시간")
 st.write(f"CO2 농도: {co2_level} ppm")
+st.write(f"빛의 파장: {light_wavelength}")
 
-# 조건에 따른 식물 특성 설명 제공
-st.subheader("조건에 따른 식물의 특성")
-
-# 다양한 성장 조건에 따른 결과 설정
-def determine_plant_characteristics(temperature, water_supply, sunlight, co2_level):
+# 식물 특성 결정 함수
+def determine_plant_characteristics(temperature, water_supply, sunlight, co2_level, light_wavelength):
     characteristics = {
         "잎 크기": "중간",
         "뿌리 크기": "중간",
@@ -37,50 +30,45 @@ def determine_plant_characteristics(temperature, water_supply, sunlight, co2_lev
         "열매 상태": "없음"
     }
 
-    # 조건에 따른 잎 크기 결정
     if temperature > 30 and water_supply < 5:
         characteristics["잎 크기"] = "작음 (수분 손실 최소화)"
     elif temperature < 0:
         characteristics["잎 크기"] = "두껍고 작음 (추위 보호)"
     elif co2_level > 600:
         characteristics["잎 크기"] = "매우 큼 (광합성 촉진)"
-    else:
-        characteristics["잎 크기"] = "중간"
-
-    # 조건에 따른 뿌리 크기 결정
+    
     if water_supply < 3:
         characteristics["뿌리 크기"] = "깊음 (물을 찾기 위해)"
     elif water_supply > 7:
         characteristics["뿌리 크기"] = "얕음 (수분이 충분함)"
-    else:
-        characteristics["뿌리 크기"] = "중간"
-
-    # 조건에 따른 꽃 크기 결정
+    
     if temperature > 20 and sunlight > 10 and co2_level > 500:
         characteristics["꽃 크기"] = "큼 (성장에 적합한 조건)"
     elif temperature < 10 or sunlight < 5:
         characteristics["꽃 크기"] = "없음 (불리한 조건)"
-    else:
-        characteristics["꽃 크기"] = "중간"
-
-    # 조건에 따른 열매 상태 결정
+    
     if temperature > 25 and water_supply > 5 and co2_level > 400:
         characteristics["열매 상태"] = "잘 자람"
     elif temperature < 15 or water_supply < 4:
         characteristics["열매 상태"] = "없음 (불리한 조건)"
-    else:
-        characteristics["열매 상태"] = "중간"
+
+    # 빛의 파장에 따른 특성 결정
+    if light_wavelength == "청색광 (400-500 nm)":
+        characteristics["잎 크기"] = "두껍고 건강함 (청색광에 의한 잎 성장 촉진)"
+    elif light_wavelength == "적색광 (600-700 nm)":
+        characteristics["꽃 크기"] = "큼 (적색광에 의한 개화 촉진)"
+    elif light_wavelength == "혼합광 (청색 + 적색)":
+        characteristics["잎 크기"] = "크고 건강함"
+        characteristics["꽃 크기"] = "큼 (청색 및 적색광의 조화로 전체적인 성장 촉진)"
 
     return characteristics
 
-# 식물의 특성 결정
-plant_characteristics = determine_plant_characteristics(temperature, water_supply, sunlight, co2_level)
+# 식물의 특성 결정 및 출력
+plant_characteristics = determine_plant_characteristics(temperature, water_supply, sunlight, co2_level, light_wavelength)
 
-# 결과 출력
-st.write(f"잎 크기: {plant_characteristics['잎 크기']}")
-st.write(f"뿌리 크기: {plant_characteristics['뿌리 크기']}")
-st.write(f"꽃 크기: {plant_characteristics['꽃 크기']}")
-st.write(f"열매 상태: {plant_characteristics['열매 상태']}")
+st.subheader("조건에 따른 식물의 특성")
+for key, value in plant_characteristics.items():
+    st.write(f"{key}: {value}")
 
 # 만들어진 식물 분석
 st.subheader("만들어진 식물 분석")
@@ -95,13 +83,6 @@ else:
     analysis += "온화한 기후에서 적당한 수분과 햇빛을 필요로 하며, 일반적인 환경에서 잘 자랄 수 있습니다. 이러한 특성을 가진 대표적인 식물로는 민들레와 같은 야생화가 있습니다."
 
 st.write(analysis)
-
-# 사례별 식물 성장 조건 추가 설명
-st.subheader("사례별 식물 성장 조건")
-st.write("**이끼류와 방울꽃**: 온도 -10°C ~ 20°C, 수분 공급량 높음, 햇빛 노출 시간 5~10시간, CO2 농도 400ppm")
-st.write("**선인장과 같은 다육식물**: 온도 30°C ~ 50°C, 수분 공급량 낮음, 햇빛 노출 시간 10~12시간, CO2 농도 400ppm")
-st.write("**유칼립투스**: 온도 10°C ~ 35°C, 수분 공급량 중간 ~ 높음, 햇빛 노출 시간 10~12시간, CO2 농도 600ppm 이상")
-st.write("**민들레와 같은 야생화**: 온도 15°C ~ 25°C, 수분 공급량 중간, 햇빛 노출 시간 8~12시간, CO2 농도 400ppm")
 
 # 식물 이미지 생성 (OpenAI API 사용하지 않음)
 st.subheader("식물 이미지 (예시)")
