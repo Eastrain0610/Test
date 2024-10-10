@@ -106,8 +106,12 @@ if analyze_button and google_api_key:
         st.write(f"API 요청 중 오류가 발생했습니다. 상태 코드: {response.status_code}")
         st.write(response.text)
 
-# 식물 이미지 생성 (OpenAI API 사용하지 않음)
-st.subheader("식물 이미지 (예시)")
+# 식물 이미지 생성
+st.subheader("선택한 성장 조건에 따른 식물 이미지")
 
-# 기본 예시 이미지 표시
-st.image("https://via.placeholder.com/512x512.png?text=식물+이미지+예시", caption="식물 이미지 (예시)")
+# 성장 조건에 따른 가상 식물 이미지 생성
+generated_image_url = "https://via.placeholder.com/512x512.png?text=성장+조건에+따른+가상+식물+이미지"
+
+# Google Generative Language API나 기타 이미지 생성 API를 통해 생성 가능
+# 여기서는 가상의 이미지 URL을 사용합니다.
+st.image(generated_image_url, caption="성장 조건에 따른 가상 식물 이미지")
