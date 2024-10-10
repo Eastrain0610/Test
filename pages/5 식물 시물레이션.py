@@ -84,10 +84,29 @@ elif co2_level > 600:
 else:
     analysis += "온화한 기후에서 적당한 수분과 햇빛을 필요로 하며, 일반적인 환경에서 잘 자랄 수 있습니다. 이러한 특성을 가진 대표적인 식물로는 민들레와 같은 야생화가 있습니다."
 
-# Gemini API를 사용하여 분석 (Gemini API의 실제 URL이 필요합니다)
-api_key = st.text_input("Gemini API 키를 입력하세요", type="password")
-if api_key:
-    st.write("API 키가 입력되었습니다. 실제 Gemini API URL을 사용하여 요청하세요.")
+# Google Generative Language API를 사용하여 분석
+google_api_key = st.text_input("Google API 키를 입력하세요", type="password")
+if google_api_key:
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key={google_api_key}"
+    headers = {
+        'Content-Type': 'application/json'
+    }
+    data = {
+        "contents": [
+            {
+                "parts": [
+                    {"text": analysis}
+                ]
+            }
+        ]
+    }
+    response = requests.post(url, headers=headers, data=json.dumps(data))
+    if response.status_code == 200:
+        result = response.json()
+        st.write(f"분석 결과: {result}")
+    else:
+        st.write(f"API 요청 중 오류가 발생했습니다. 상태 코드: {response.status_code}")
+        st.write(response.text)
 
 st.write(analysis)
 
