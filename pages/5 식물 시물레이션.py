@@ -68,9 +68,11 @@ def determine_plant_characteristics(temperature, water_supply, sunlight, co2_lev
 # 식물의 특성 결정 및 출력
 plant_characteristics = determine_plant_characteristics(temperature, water_supply, sunlight, co2_level, light_wavelength)
 
-st.subheader("조건에 따른 식물의 특성")
+analysis = "조건에 따른 식물의 특성:
+"
 for key, value in plant_characteristics.items():
-    st.write(f"{key}: {value}")
+    analysis += f"{key}: {value}
+"
 
 # Google Generative Language API를 사용하여 분석
 google_api_key = st.text_input("Google API 키를 입력하세요", type="password")
@@ -100,7 +102,6 @@ if google_api_key:
         st.write(f"API 요청 중 오류가 발생했습니다. 상태 코드: {response.status_code}")
         st.write(response.text)
 
-st.write(analysis)
 
 # 식물 이미지 생성 (OpenAI API 사용하지 않음)
 st.subheader("식물 이미지 (예시)")
