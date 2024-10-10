@@ -82,5 +82,28 @@ if analyze_button:
     for key, value in plant_characteristics.items():
         analysis += f"{key}: {value}\n"
 
-    # OpenAI GPT-3를 사용하여 내용 분석 생성
-    
+    # Google Gemini API를 사용하여 내용 분석 생성
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key={openai_api_key}"
+    headers = {
+        'Content-Type': 'application/json'
+    }
+    data = {
+        "contents": [
+            {
+                "parts": [
+                    {"text": analysis}
+                ]
+            }
+        ]
+    }
+    response = requests.post(url, headers=headers, data=json.dumps(data))
+    if response.status_code == 200:
+        result = response.json()
+        try:
+            content = result['candidates'][0]['content']['parts'][0]['text']
+            st.write(f"분석 결과: {content}")
+        except KeyError:
+            st.write("분석 결과를 처리하는 중 오류가 발생했습니다.")
+    else:
+        st.write(f"API 요청 중 오류가 발생했습니다. 상태 코드: {response.status_code}")
+        st.write(response.text)
