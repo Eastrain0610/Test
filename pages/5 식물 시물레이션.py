@@ -68,8 +68,7 @@ def determine_plant_characteristics(temperature, water_supply, sunlight, co2_lev
 # 식물의 특성 결정 및 출력
 plant_characteristics = determine_plant_characteristics(temperature, water_supply, sunlight, co2_level, light_wavelength)
 
-analysis = "조건에 따른 식물의 특성:
-"
+analysis = "조건에 따른 식물의 특성:"
 for key, value in plant_characteristics.items():
     analysis += f"{key}: {value}
 "
