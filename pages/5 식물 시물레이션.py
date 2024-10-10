@@ -70,8 +70,7 @@ plant_characteristics = determine_plant_characteristics(temperature, water_suppl
 
 analysis = "조건에 따른 식물의 특성:"
 for key, value in plant_characteristics.items():
-    analysis += f"{key}: {value}
-"
+    analysis += f"{key}: {value}"
 
 # Google Generative Language API를 사용하여 분석
 google_api_key = st.text_input("Google API 키를 입력하세요", type="password")
