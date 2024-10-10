@@ -40,9 +40,10 @@ if analyze_button:
         f"- 수분 공급량: {water_supply} (1: 적음, 10: 많음)\n"
         f"- 햇빛 노출 시간: {sunlight}시간\n"
         f"- CO2 농도: {co2_level} ppm\n"
-        f"- 빛의 파장: {light_wavelength}\n"
-        "이 조건들이 식물의 성장에 미치는 영향을 한국어로 자세히 설명해 주세요. "
-        "각 조건이 식물의 생리에 미치는 영향을 설명하고, 이에 맞는 식물의 예시를 제시해 주세요."
+        f"- 빛의 파장: {light_wavelength}\n\n"
+        "각각의 조건이 식물 성장에 미치는 영향을 한국어로 자세히 설명해 주세요. "
+        "그리고, 이러한 모든 조건을 고려할 때 가장 유사하게 잘 자랄 수 있는 식물 한 가지를 예시로 들어주세요. "
+        "예를 들어, 설정한 조건에서 잘 자라는 식물의 종류와 그 이유를 설명해 주세요."
     )
 
     # OpenAI GPT-3.5-turbo 사용하여 분석 요청
@@ -51,7 +52,7 @@ if analyze_button:
         response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
             messages=[
-                {"role": "system", "content": "You are an assistant that provides detailed explanations about plant growth in Korean based on specific conditions."},
+                {"role": "system", "content": "You are an assistant that provides detailed explanations in Korean about plant growth based on specific conditions."},
                 {"role": "user", "content": analysis_prompt}
             ],
             max_tokens=1000,
