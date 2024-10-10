@@ -49,7 +49,7 @@ else:
 st.subheader("서식지와 신체적 조건 간의 적합성")
 if environment == "사막":
     if ear_size > 5 and fur_thickness <= 5 and body_size <= 5:
-        st.write("사막에 적합한 신체적 조건을 잘 선택하셨습니다.")
+        st.write("사막에 적합한 신체적1 조건을 잘 선택하셨습니다.")
     else:
         st.write("선택한 조건들이 사막 환경에 최적화되지 않을 수 있습니다.")
 elif environment == "북극":
