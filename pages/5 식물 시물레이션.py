@@ -103,7 +103,11 @@ if google_api_key:
     response = requests.post(url, headers=headers, data=json.dumps(data))
     if response.status_code == 200:
         result = response.json()
-        st.write(f"분석 결과: {result}")
+        try:
+            content = result['candidates'][0]['content']['parts'][0]['text']
+            st.write(f"분석 결과: {content}")
+        except KeyError:
+            st.write("분석 결과를 처리하는 중 오류가 발생했습니다.")
     else:
         st.write(f"API 요청 중 오류가 발생했습니다. 상태 코드: {response.status_code}")
         st.write(response.text)
