@@ -12,7 +12,7 @@ if not openai_api_key:
     st.warning("API 키를 입력해야 시뮬레이션을 시작할 수 있습니다.")
     st.stop()
 
-# OpenAI API 키 설정
+# OpenAI API 설정
 openai.api_key = openai_api_key
 
 st.header("식물 성장 조건 설정")
@@ -82,28 +82,28 @@ if analyze_button:
     for key, value in plant_characteristics.items():
         analysis += f"{key}: {value}\n"
 
-    # Google Gemini API를 사용하여 내용 분석 생성
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key={openai_api_key}"
-    headers = {
-        'Content-Type': 'application/json'
-    }
-    data = {
-        "contents": [
-            {
-                "parts": [
-                    {"text": analysis}
-                ]
-            }
-        ]
-    }
-    response = requests.post(url, headers=headers, data=json.dumps(data))
-    if response.status_code == 200:
-        result = response.json()
-        try:
-            content = result['candidates'][0]['content']['parts'][0]['text']
-            st.write(f"분석 결과: {content}")
-        except KeyError:
-            st.write("분석 결과를 처리하는 중 오류가 발생했습니다.")
-    else:
-        st.write(f"API 요청 중 오류가 발생했습니다. 상태 코드: {response.status_code}")
-        st.write(response.text)
+    # OpenAI GPT-3를 사용하여 내용 분석 생성
+    try:
+        response = openai.Completion.create(
+            engine="text-davinci-003",
+            prompt=analysis,
+            max_tokens=150
+        )
+        content = response.choices[0].text.strip()
+        st.write(f"분석 결과: {content}")
+    except Exception as e:
+        st.write(f"API 요청 중 오류가 발생했습니다: {e}")
+
+    # OpenAI DALL-E를 사용하여 성장 조건에 따른 이미지 생성
+    st.subheader("선택한 성장 조건에 따른 식물 이미지")
+    try:
+        image_prompt = f"A plant with the following characteristics: {analysis}"
+        image_response = openai.Image.create(
+            prompt=image_prompt,
+            n=1,
+            size="512x512"
+        )
+        image_url = image_response['data'][0]['url']
+        st.image(image_url, caption="성장 조건에 따른 가상 식물 이미지")
+    except Exception as e:
+        st.write(f"이미지 생성 중 오류가 발생했습니다: {e}")
