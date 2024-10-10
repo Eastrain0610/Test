@@ -4,4 +4,4 @@ streamlit
 xlsxwriter
 pytz
 networkx
-open ai
+openai
