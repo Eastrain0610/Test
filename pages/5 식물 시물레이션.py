@@ -6,6 +6,11 @@ import json
 st.title("식물 성장 시뮬레이션")
 
 # 식물 성장 조건 설정
+google_api_key = st.text_input("Google API 키를 입력하세요", type="password")
+if not google_api_key:
+    st.warning("API 키를 입력해야 시뮬레이션을 시작할 수 있습니다.")
+    st.stop()
+
 st.header("식물 성장 조건 설정")
 
 # 성장 조건 슬라이더 설정
@@ -68,9 +73,11 @@ def determine_plant_characteristics(temperature, water_supply, sunlight, co2_lev
 # 식물의 특성 결정 및 출력
 plant_characteristics = determine_plant_characteristics(temperature, water_supply, sunlight, co2_level, light_wavelength)
 
-analysis = "조건에 따른 식물의 특성:"
+analysis = "조건에 따른 식물의 특성:
+"
 for key, value in plant_characteristics.items():
-    analysis += f"{key}: {value}"
+    analysis += f"{key}: {value}
+"
 
 # Google Generative Language API를 사용하여 분석
 google_api_key = st.text_input("Google API 키를 입력하세요", type="password")
