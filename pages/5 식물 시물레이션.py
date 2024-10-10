@@ -72,10 +72,6 @@ st.subheader("조건에 따른 식물의 특성")
 for key, value in plant_characteristics.items():
     st.write(f"{key}: {value}")
 
-# 만들어진 식물 분석
-st.subheader("만들어진 식물 분석")
-analysis = "이러한 특성을 가진 식물은 "
-
 # Google Generative Language API를 사용하여 분석
 google_api_key = st.text_input("Google API 키를 입력하세요", type="password")
 if google_api_key:
