@@ -77,14 +77,14 @@ if analyze_button:
     for key, value in plant_characteristics.items():
         analysis += f"{key}: {value}\n"
 
-    # OpenAI GPT-3.5-turbo 사용하여 분석
+    # OpenAI GPT-3.5-turbo 사용하여 분석 및 한국어로 번역 요청
     openai.api_key = openai_api_key
     try:
         response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
             messages=[
-                {"role": "system", "content": "You are an assistant that provides detailed and comprehensive explanations about plant growth based on specific conditions."},
-                {"role": "user", "content": f"Here are the conditions of plant growth:\n{analysis}\nPlease provide a thorough and well-organized explanation of how these conditions affect the plant's growth and characteristics, in a cohesive paragraph."}
+                {"role": "system", "content": "You are an assistant that provides explanations in Korean about plant growth based on specific conditions."},
+                {"role": "user", "content": f"Here are the conditions of plant growth:\n{analysis}\nPlease provide a detailed explanation of how these conditions affect the plant's growth and characteristics, in Korean."}
             ],
             max_tokens=300,
             temperature=0.6
