@@ -1,7 +1,7 @@
 import streamlit as st
 import requests
 import json
-import openai
+from openai import OpenAI
 
 # Streamlit 앱 제목
 st.title("식물 성장 시뮬레이션")
@@ -12,8 +12,8 @@ if not openai_api_key:
     st.warning("API 키를 입력해야 시뮬레이션을 시작할 수 있습니다.")
     st.stop()
 
-# OpenAI API 설정
-openai.api_key = openai_api_key
+# OpenAI 클라이언트 초기화
+client = OpenAI(api_key=openai_api_key)
 
 st.header("식물 성장 조건 설정")
 
@@ -84,7 +84,7 @@ if analyze_button:
 
     # OpenAI GPT-3를 사용하여 내용 분석 생성
     try:
-        response = openai.ChatCompletion.create(
+        response = client.ChatCompletion.create(
             model="gpt-3.5-turbo",
             messages=[
                 {"role": "system", "content": "You are a helpful assistant."},
@@ -101,13 +101,14 @@ if analyze_button:
     st.subheader("선택한 성장 조건에 따른 식물 이미지")
     try:
         image_prompt = f"A plant with the following characteristics: {analysis}"
-        image_response = openai.Image.create(
+        image_response = client.images.generate(
+            model="dall-e-3",
             prompt=image_prompt,
-            n=1,
-            size="512x512",
-            response_format="url"
+            size="1024x1024",
+            quality="standard",
+            n=1
         )
-        image_url = image_response['data'][0]['url']
+        image_url = image_response.data[0].url
         st.image(image_url, caption="성장 조건에 따른 가상 식물 이미지")
     except Exception as e:
         st.write(f"이미지 생성 중 오류가 발생했습니다: {e}")
