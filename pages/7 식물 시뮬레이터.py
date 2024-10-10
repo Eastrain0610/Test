@@ -84,10 +84,10 @@ if analyze_button:
             model="gpt-3.5-turbo",
             messages=[
                 {"role": "system", "content": "You are a helpful assistant for analyzing plant growth."},
-                {"role": "user", "content": analysis}
+                {"role": "user", "content": f"Given the following conditions: \n{analysis}\nPlease provide a detailed explanation of the plant's growth response to these conditions."}
             ],
-            max_tokens=100,
-            temperature=0.5
+            max_tokens=200,
+            temperature=0.7
         )
         content = response['choices'][0]['message']['content'].strip()
         st.write(f"분석 결과: {content}")
