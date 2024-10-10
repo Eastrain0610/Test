@@ -75,14 +75,6 @@ for key, value in plant_characteristics.items():
 # 만들어진 식물 분석
 st.subheader("만들어진 식물 분석")
 analysis = "이러한 특성을 가진 식물은 "
-if temperature > 30 and water_supply < 5:
-    analysis += "건조하고 뜨거운 사막과 같은 환경에서 잘 적응할 수 있습니다. 잎이 작고 수분 손실을 최소화하는 특성을 가지고 있습니다. 대표적인 식물로는 선인장과 같은 다육식물이 있습니다."
-elif temperature < 0:
-    analysis += "추운 기후의 툰드라 환경에서 잘 살 수 있습니다. 두꺼운 잎과 낮은 키로 추위를 견딜 수 있습니다. 대표적인 식물로는 이끼류와 방울꽃 등이 있습니다."
-elif co2_level > 600:
-    analysis += "CO2 농도가 높은 환경에서 빠르게 성장할 수 있으며, 광합성이 활발하게 이루어지는 환경에 적합합니다. 이러한 특성을 가진 대표적인 식물로는 고속 성장 나무인 유칼립투스가 있습니다."
-else:
-    analysis += "온화한 기후에서 적당한 수분과 햇빛을 필요로 하며, 일반적인 환경에서 잘 자랄 수 있습니다. 이러한 특성을 가진 대표적인 식물로는 민들레와 같은 야생화가 있습니다."
 
 # Google Generative Language API를 사용하여 분석
 google_api_key = st.text_input("Google API 키를 입력하세요", type="password")
