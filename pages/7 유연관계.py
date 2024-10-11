@@ -37,6 +37,24 @@ user_animal_protein_seq = st.text_area('비교할 동물의 사이토크롬 C �
 # 사람의 사이토크롬 C 단백질 서열
 human_protein_seq = "MGDVEKGKKIFIMKCSQCHTVEKGGKHKTGPNLHGLFGRKTGQAPGYSYTAANKNKGIIWGEDTLMEYLENPKKYIPGTKMIFVGIKKKEERADLIAYLKKATNE"
 
+# 출석한 학생 데이터를 저장할 리스트 초기화
+if 'student_data' not in st.session_state:
+    st.session_state['student_data'] = []
+
+# 학생 데이터 추가
+if user_animal_name and user_animal_sci_name and user_animal_protein_seq:
+    st.session_state['student_data'].append({
+        '이름': user_animal_name,
+        '학명': user_animal_sci_name,
+        '서열': user_animal_protein_seq
+    })
+
+# 저장된 학생 데이터를 데이터프레임으로 변환하여 표시
+if st.session_state['student_data']:
+    student_df = pd.DataFrame(st.session_state['student_data'])
+    st.write("## 출석한 학생:")
+    st.dataframe(student_df)
+
 # 서열 비교 및 결과 출력
 def compare_sequences(seq1, seq2):
     if not seq1 or not seq2:
