@@ -1,11 +1,12 @@
+import os
 import streamlit as st
 import matplotlib.pyplot as plt
-import numpy as np
-import requests
-import os
 import matplotlib.font_manager as fm
 
-# 폰트 파일 경로 설정: 다양한 경로에서 시도해 보기
+# 페이지 설정
+st.set_page_config(page_title="사이토크롬 C 서열 비교: 사람 vs 다른 동물", layout="wide")
+
+# 폰트 파일 경로 설정
 possible_paths = [
     "./fonts/NanumGothic.ttf",
     "../fonts/NanumGothic.ttf",
@@ -24,103 +25,85 @@ else:
     st.warning("NanumGothic.ttf 폰트 파일을 찾을 수 없습니다. 기본 폰트를 사용합니다.")
     fontprop = None
 
-human_cytochrome_c = "MGDVEKGKKIFIMKCSQCHTVEKGGKHKTGPNLHGLFGRKTGQAPGYSYTAANKNKGIIWGEDTLMEYLENPKKYIPGTKMIFVGIKKKEERADLIAYLKKATNE"
-st.write("사람의 사이토크롬 C 서열:")
-st.write(human_cytochrome_c)
-st.write("사람의 사이토크롬 C 서열:")
-st.write(human_cytochrome_c)
+# 나눔 고딕 폰트 설정 (CSS 적용)
+st.markdown("""
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Nanum+Gothic&display=swap');
+    html, body, [class*="css"]  {
+        font-family: 'Nanum Gothic', sans-serif;
+    }
+    </style>
+    """, unsafe_allow_html=True)
 
-# 서열 정의
-human_cytochrome_c = "MGDVEKGKKIFIMKCSQCHTVEKGGKHKTGPNLHGLFGRKTGQAPGYSYTAANKNKGIIWGEDTLMEYLENPKKYIPGTKMIFVGIKKKEERADLIAYLKKATNE"
-rhesus_cytochrome_c = "MGDVEKGKKIFVQKCAQCHTVEKGGKHKTGPNLHGLFGRKTGQAPGYSYTAANKNKGIIWGEDTLMEYLENPKKYIPGTKMIFAGIKKKTEREDLIAYLKKADEYIQNA"
-chicken_cytochrome_c = "MGDVEKGKKIFVQKCAQCHTVEKGGPHKTGPNLHGLFGRKTGQAPGYSYTAANKNKGIIWGEDTLMEYLEDPKDYIPGTKMVFAAMKKKTEREDLIAYLKDATSE"
+# 나눔 고딕 폰트를 Matplotlib에 설정
+if fontprop:
+    plt.rc('font', family=fontprop.get_name())
+plt.rcParams['axes.unicode_minus'] = False
+
+# 앱 설명
+st.title("사이토크롬 C 서열 비교: 사람 vs 다른 동물")
+
+# 동물 이름 및 학명, 서열 입력
+animal_common_name = st.text_input("비교할 동물의 이름을 작성해 주세요:", "예:침팬지")
+animal_name = st.text_input("비교할 동물의 학명을 입력하세요:", "예:Pan troglodytes")
+animal_sequence = st.text_area("비교할 동물의 사이토크롬 C의 염기 서열을 작성해주세요:", "예:MGDVEKGKKIFVQKCAQCHTVEKGGKHKTGPNLHGLFRQKTGQAVGFSYTDANKNKGIIWGEDTLMEYLENPKKYIPGTKMIFAGIKKKAEKADLTAYLKKATND")
+
+# 사람의 사이토크롬 C 서열
+human_sequence = "MGDVEKGKKIFIMKCSQCHTVEKGGKHKTGPNLHGLFGRKTGQAPGYSYTAANKNKGIIWGEDTLMEYLENPKKYIPGTKMIFVGIKKKEERADLIAYLKKATNE"
+
+# 서열 일치율 계산 함수
+def calculate_similarity(seq1, seq2):
+    # 두 서열의 길이가 다를 경우 최소 길이를 기준으로 계산
+    min_length = min(len(seq1), len(seq2))
+    matches = sum(a == b for a, b in zip(seq1[:min_length], seq2[:min_length]))
+    return matches / min_length * 100
 
 # 서열 비교 함수
-def compare_sequences(seq1, seq2):
-    differences = []
-    for i, (residue1, residue2) in enumerate(zip(seq1, seq2)):
-        if residue1 != residue2:
-            differences.append((i, residue1, residue2))
-    return differences
-
-# 일치 비율 계산 함수
-def calculate_similarity(seq1, seq2):
-    matches = sum(1 for a, b in zip(seq1, seq2) if a == b)
-    return (matches / len(seq1)) * 100
-
-# 외부 데이터베이스에서 서열 가져오기 함수 (Gemini API 사용)
-def fetch_sequence(animal_name):
-    # 실제 API URL로 변경 필요
-    url = f"https://gemini.example.com/api/v1/sequences?organism={animal_name}"
-    response = requests.get(url)
-    if response.status_code == 200:
-        return response.json().get("sequence", "").strip()
-    else:
-        st.error("서열을 가져오는 데 실패했습니다. 다시 시도하세요.")
-        return None
-
-# Streamlit UI
-def main():
-    st.title("사이토크롬 C 서열 비교: 사람 vs 다른 동물")
-    
-    # 동물 선택 또는 사용자 입력을 통한 서열 가져오기
-    option = st.selectbox(
-        '어떤 동물의 서열을 비교하시겠습니까?',
-        ('붉은털 원숭이', '닭', '다른 동물 (직접 입력)')
-    )
-    
-    if option == '붉은털 원숭이':
-        seq2 = rhesus_cytochrome_c
-        label2 = '붉은털 원숭이'
-    elif option == '닭':
-        seq2 = chicken_cytochrome_c
-        label2 = '닭'
-    else:
-        animal_name = st.text_input("비교할 동물의 이름을 입력하세요:")
-        if animal_name:
-            seq2 = fetch_sequence(animal_name)
-            label2 = animal_name
+def align_sequences(query, subject):
+    alignment = []
+    for i, (q, s) in enumerate(zip(query, subject)):
+        if q == s:
+            alignment.append(q)  # 일치하는 염기 서열 그대로 표시
         else:
-            st.warning("동물의 이름을 입력하세요.")
-            st.stop()
-    
-    st.write("사람의 사이토크롬 C 서열을 기준으로 비교를 시작합니다.")
-st.write("사람의 사이토크롬 C 서열을 기준으로 비교를 시작합니다.")
-seq1 = human_cytochrome_c
-    label1 = '사람'
-    
-    # 서열 비교 수행
-    if seq2:
-        if len(seq1) != len(seq2):
-            st.error("두 서열의 길이가 다릅니다. 비교가 불가능합니다.")
-            return
-        
-        differences = compare_sequences(seq1, seq2)
-        similarity = calculate_similarity(seq1, seq2)
-        
-        # 결과 출력
-        st.write(f"두 서열 간의 일치율: {similarity:.2f}%")
-        if differences:
-            st.write(f"두 서열 간의 차이점: 총 {len(differences)}개의 차이가 발견되었습니다.")
-            for index, residue1, residue2 in differences:
-                st.write(f"위치 {index + 1}: {label1} - {residue1}, {label2} - {residue2}")
-        else:
-            st.write("두 서열은 동일합니다.")
-        
-        # 서열 비교 결과 시각화
-        diff_indices = [i for i, _, _ in differences]
-        sequence_length = len(seq1)
-        x = np.arange(1, sequence_length + 1)
-        y = [1 if i in diff_indices else 0 for i in range(sequence_length)]
-        
-        fig, ax = plt.subplots(figsize=(12, 3))
-        ax.bar(x, y, color='b')
-        ax.set_xlabel('Position in Sequence', fontproperties=fontprop if fontprop else None)
-        ax.set_ylabel('Difference (1 = Different, 0 = Same)', fontproperties=fontprop if fontprop else None)
-        ax.set_title(f'Comparison of {label1} and {label2} Cytochrome C Sequences', fontproperties=fontprop if fontprop else None)
-        
-        # Streamlit을 통해 그래프 표시
-        st.pyplot(fig)
+            alignment.append(' ')  # 불일치하는 부분은 공백으로 표시
+    return ''.join(alignment)
 
-if __name__ == "__main__":
-    main()
+# 들여쓰기와 간격을 맞추기 위해 각 서열의 출력 부분을 일정하게 정렬합니다.
+def format_alignment_line(label, index, sequence, length=60):
+    return f"{label:<6}{index:<4} {sequence[:length]:<{length}} {index + length - 1}"
+
+# 서열 정렬 및 출력
+st.subheader("서열 정렬 결과 (수정 가능)")
+query_aligned = st.text_area("사람의 서열 (Query)", human_sequence)
+subject_aligned = st.text_area("비교할 동물의 서열 (Sbjct)", animal_sequence)
+alignment = align_sequences(query_aligned, subject_aligned)
+
+st.text(format_alignment_line("Query", 1, query_aligned))
+st.text(f"            {alignment[:60]}")
+st.text(format_alignment_line("Sbjct", 1, subject_aligned))
+
+st.text(format_alignment_line("Query", 61, query_aligned[60:]))
+st.text(f"            {alignment[60:]}")
+st.text(format_alignment_line("Sbjct", 61, subject_aligned[60:]))
+
+# 사람의 서열 출력
+st.subheader("사람의 사이토크롬 C 서열")
+st.text(human_sequence[:80] + '\n' + human_sequence[80:])
+
+# 일치율 계산 및 출력
+similarity = calculate_similarity(human_sequence, animal_sequence)
+st.write(f"사람과 {animal_common_name}의 서열 일치율: {similarity:.2f}%")
+
+# 서열 비교 시각화
+fig, ax = plt.subplots(figsize=(10, 6))
+labels = ['사람', animal_common_name]
+similarity_values = [100, similarity]
+ax.bar(labels, similarity_values, color=['blue', 'green'])
+ax.set_ylabel('서열 일치율 (%)', fontproperties=fontprop if fontprop else None)
+ax.set_title('사이토크롬 C 서열 일치율 비교', fontproperties=fontprop if fontprop else None)
+ax.tick_params(axis='x', labelsize=10)
+for label in ax.get_xticklabels():
+    label.set_fontproperties(fontprop if fontprop else None)
+
+# Streamlit에 그래프 출력
+st.pyplot(fig)
