@@ -48,7 +48,6 @@ if analyze_button:
         "온도가 너무 낮으면 잎사귀, 열매, 식물의 크기 등등을 고려해줘. "
         "예를 들면, 너무 높은 온도와 수분이 없는 조건에서는 잎사귀의 형태가 뾰족하게 자란다와 같은 식의 표현이면 좋겠어. "
         "물론 내가 쓴 예시보다 더 구체적으로 분석해서 작성해줘."
-        "끝으로, 성장 조건을 종합하여 이 조건과 유사한 식물의 사례를 3가지 이상 들어줘."
     )
 
     # OpenAI GPT-3.5-turbo 사용하여 분석 요청
@@ -79,6 +78,13 @@ if st.session_state.analysis_content:
     if generate_image_button:
         st.subheader("그림 생성")
 
+        # 분석 결과에서 식물의 종류 추출
+        plant_names = ""
+        if "사례" in st.session_state.analysis_content:
+            plant_lines = [line for line in st.session_state.analysis_content.split('\n') if "사례" in line]
+            if plant_lines:
+                plant_names = ", ".join(plant_lines)
+
         # 그림 생성을 위한 프롬프트 생성
         image_prompt = (
             f"다음 조건에 맞는 식물을 그려주세요:\n"
@@ -86,8 +92,9 @@ if st.session_state.analysis_content:
             f"- 수분 공급량: {water_supply} (1: 적음, 10: 많음)\n"
             f"- 햇빛 노출 시간: {sunlight}시간\n"
             f"- CO2 농도: {co2_level} ppm\n"
-            f"- 빛의 파장: {light_wavelength}\n\n"
-            "분석한 결과에 나온 사례의 식물을 그림으로 그려줘."
+            f"- 빛의 파장: {light_wavelength}\n"
+            f"- 추천된 식물: {plant_names}\n\n"
+            "선택한 성장 조건에 맞는 식물의 형태, 잎의 크기, 열매 등을 중심으로 그려주세요. 서식지보다는 식물의 모양과 잎의 특성에 집중하여 식물을 표현해 주세요."
         )
 
         # OpenAI의 이미지 생성 모델 사용
