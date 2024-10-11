@@ -53,22 +53,42 @@ st.title("사이토크롬 C 서열 비교: 사람 vs 다른 동물")
 # 학명 검색 및 입력
 search_term = st.text_input("검색할 동물의 이름 또는 키워드를 입력하세요:", "chimpanzee")
 
-# Gemini API를 사용해 검색어에 따른 생물 목록 검색하기
-if search_term:
+# Google Generative Language API를 사용해 검색어에 따른 설명 생성하기
+if search_term and api_key:
     try:
-        search_response = requests.get(f"https://api.gemini.com/search?query={search_term}", headers={"Authorization": f"Bearer {api_key}"})
-        if search_response.status_code == 200:
-            search_results = search_response.json().get('results', [])
-            if search_results:
-                animal_name = st.selectbox("검색 결과에서 선택하세요:", [result['scientific_name'] for result in search_results])
-            else:
-                st.warning("검색 결과가 없습니다. 다른 검색어를 입력해보세요.")
-        elif search_response.status_code == 401:
-            st.error("인증 오류: 유효하지 않은 API 키입니다. 올바른 키를 입력해 주세요.")
+        # Google Generative Language API 호출
+        headers = {
+            'Content-Type': 'application/json',
+        }
+        data = {
+            "contents": [
+                {
+                    "parts": [
+                        {
+                            "text": search_term
+                        }
+                    ]
+                }
+            ]
+        }
+        response = requests.post(
+            f'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key={api_key}',
+            headers=headers,
+            json=data
+        )
+
+        if response.status_code == 200:
+            response_data = response.json()
+            generated_text = response_data.get('contents', [{}])[0].get('parts', [{}])[0].get('text', "결과 없음")
+            st.write(f"검색 결과: {generated_text}")
         else:
-            st.warning(f"Gemini API에서 검색 결과를 가져오는 데 실패했습니다. 상태 코드: {search_response.status_code}")
+            st.error(f"API 호출 실패: 상태 코드 {response.status_code} - {response.text}")
+
     except Exception as e:
-        st.error(f"API 요청 중 오류가 발생했습니다: {e}")
+        st.error(f"오류가 발생했습니다: {e}")
+else:
+    st.warning("검색 결과가 없으므로 직접 학명을 입력하세요.")
+    animal_name = st.text_input("비교할 동물의 학명을 입력하세요:", "Pan troglodytes")
 else:
     st.warning("검색 결과가 없으므로 직접 학명을 입력하세요.")
     animal_name = st.text_input("비교할 동물의 학명을 입력하세요:", "Pan troglodytes")
