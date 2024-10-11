@@ -41,7 +41,7 @@ human_protein_seq = "MGDVEKGKKIFIMKCSQCHTVEKGGKHKTGPNLHGLFGRKTGQAPGYSYTAANKNKGII
 if 'student_data' not in st.session_state:
     st.session_state['student_data'] = []
 
-# 학생 데이터 추가
+# 학명 데이터 추가
 if user_animal_name and user_animal_sci_name and user_animal_protein_seq:
     st.session_state['student_data'].append({
         '이름': user_animal_name,
@@ -52,7 +52,7 @@ if user_animal_name and user_animal_sci_name and user_animal_protein_seq:
 # 저장된 학생 데이터를 데이터프레임으로 변환하여 표시
 if st.session_state['student_data']:
     student_df = pd.DataFrame(st.session_state['student_data'])
-    st.write("## 출석한 학생:")
+    st.write("## 학명 데이터:")
     st.dataframe(student_df)
 
 # 서열 비교 및 결과 출력
