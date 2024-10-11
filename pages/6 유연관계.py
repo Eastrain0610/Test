@@ -46,7 +46,9 @@ st.write("이 애플리케이션은 사람과 다른 동물의 사이토크롬 C
 
 # 서열 데이터 (예시)
 human_sequence = "MGDVEKGKKIFIMKCSQCHTVEKGGKHKTGP"
-other_animal_sequence = "MGDVEKGKKIFIMKCSQCHTVEKGGKHKTAP"
+
+# 사용자 입력을 통한 다른 동물의 서열 입력
+other_animal_sequence = st.text_input("다른 동물의 사이토크롬 C 서열을 입력하세요:", "MGDVEKGKKIFIMKCSQCHTVEKGGKHKTAP")
 
 # 서열 일치율 계산
 def calculate_similarity(seq1, seq2):
