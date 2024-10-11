@@ -7,10 +7,10 @@ import requests
 # 페이지 설정
 st.set_page_config(page_title="사이토크롬 C 서열 비교: 사람 vs 다른 동물", layout="wide")
 
-# Gemini API 키 입력 및 설정
-api_key = st.text_input("Gemini API 키를 입력하세요:", type="password")
+# Google API 및 Gemini API 키 입력
+api_key = st.text_input("Google 또는 Gemini API 키를 입력하세요:", type="password")
 if not api_key:
-    st.error("이 애플리케이션을 사용하려면 유효한 Gemini API 키가 필요합니다.")
+    st.error("이 애플리케이션을 사용하려면 유효한 API 키가 필요합니다.")
     st.stop()
 
 # 폰트 파일 경로 설정
@@ -89,37 +89,6 @@ if search_term and api_key:
 else:
     st.warning("검색 결과가 없으므로 직접 학명을 입력하세요.")
     animal_name = st.text_input("비교할 동물의 학명을 입력하세요:", "Pan troglodytes")
-else:
-    st.warning("검색 결과가 없으므로 직접 학명을 입력하세요.")
-    animal_name = st.text_input("비교할 동물의 학명을 입력하세요:", "Pan troglodytes")
-
-# Gemini API를 사용해 학명에 따른 생물 정보 가져오기
-if 'animal_name' in locals() and animal_name:
-    try:
-        response = requests.get(f"https://api.gemini.com/organism/{animal_name}", headers={"Authorization": f"Bearer {api_key}"})
-        st.write(f"API 응답 상태 코드: {response.status_code}")  # 상태 코드 출력
-        if response.status_code == 200:
-            organism_info = response.json().get('common_name', "정보를 찾을 수 없습니다.")
-            st.write(f"{animal_name}는 {organism_info}입니다.")
-        elif response.status_code == 401:
-            st.error("인증 오류: 유효하지 않은 API 키입니다. 올바른 키를 입력해 주세요.")
-        elif response.status_code == 404:
-            st.warning("해당 학명에 대한 정보를 찾을 수 없습니다. 샘플 데이터에서 정보를 찾고 있습니다...")
-            # 샘플 응답 데이터 사용
-            sample_data = {
-                "Pan troglodytes": "침팬지",
-                "Homo sapiens": "인간",
-                "Canis lupus familiaris": "개"
-            }
-            if animal_name in sample_data:
-                organism_info = sample_data[animal_name]
-                st.write(f"{animal_name}는 {organism_info}입니다.")
-            else:
-                st.warning("샘플 데이터에서도 정보를 찾을 수 없습니다. 입력 예시: 'Pan troglodytes' 또는 'Homo sapiens'와 같은 형식을 사용해보세요.")
-        else:
-            st.warning(f"Gemini API에서 생물 정보를 가져오는 데 실패했습니다. 상태 코드: {response.status_code}")
-    except Exception as e:
-        st.error(f"API 요청 중 오류가 발생했습니다: {e}")
 
 # 사람의 사이토크롬 C 서열
 human_sequence = "MGDVEKGKKIFIMKCSQCHTVEKGGKHKTGPNLHGLFGRKTGQAPGYSYTAANKNKGIIWGEDTLMEYLENPKKYIPGTKMIFVGIKKKEERADLIAYLKKATNE"
