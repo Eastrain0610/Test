@@ -47,10 +47,6 @@ st.write("이 애플리케이션은 사람과 다른 동물의 사이토크롬 C
 # 사람의 사이토크롬 C 서열
 human_sequence = "MGDVEKGKKIFIMKCSQCHTVEKGGKHKTGPNLHGLFGRKTGQAPGYSYTAANKNKGIIWGEDTLMEYLENPKKYIPGTKMIFVGIKKKEERADLIAYLKKATNE"
 
-
-    other_animal_sequence = st.text_input(f"{animal_name}의 사이토크롬 C 서열을 입력하세요:", f"MGDVEKGKKIFIMKCSQCHTVEKGGKHKTAP")
-    other_animal_sequences.append(other_animal_sequence)
-
 # 서열 일치율 계산
 def calculate_similarity(seq1, seq2):
     matches = sum(a == b for a, b in zip(seq1, seq2))
@@ -59,8 +55,6 @@ def calculate_similarity(seq1, seq2):
 # 결과 출력
 st.write("사람과 다른 동물들의 사이토크롬 C 서열 일치율:")
 similarities = []
-    similarities.append(similarity)
-    st.write(f"사람과 {animal_name}의 서열 일치율: {similarity:.2f}%")
 
 # 서열 데이터 출력
 st.subheader("사람의 사이토크롬 C 서열")
