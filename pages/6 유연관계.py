@@ -54,7 +54,7 @@ def calculate_similarity(seq1, seq2):
 
 # 결과 출력
 st.write("사람과 다른 동물들의 사이토크롬 C 서열 일치율:")
-similarities = []
+similarities = [0]
 
 # 서열 데이터 출력
 st.subheader("사람의 사이토크롬 C 서열")
@@ -65,7 +65,7 @@ st.text(human_sequence[:80] + '\n' + human_sequence[80:])
 fig, ax = plt.subplots(figsize=(10, 6))
 labels = ['사람']
 similarity_values = []
-ax.bar(labels, similarity_values, color=['blue'] * len(other_animal_sequences))
+ax.bar(labels, similarity_values, color=['blue'])
 ax.set_ylabel('서열 일치율 (%)', fontproperties=fontprop if fontprop else None)
 ax.set_title('사이토크롬 C 서열 일치율 비교', fontproperties=fontprop if fontprop else None)
 ax.tick_params(axis='x', labelsize=10)
