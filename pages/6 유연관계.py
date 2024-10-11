@@ -32,7 +32,7 @@ st.title('사이토크롬 C 서열 비교: 사람 vs 다른 동물')
 # 학생이 입력한 동물 이름, 학명, 단백질 서열
 user_animal_name = st.text_input('비교할 동물의 이름을 입력하세요 (예: 침팬지):')
 user_animal_sci_name = st.text_input('비교할 동물의 학명을 입력하세요 (예: Pan troglodytes):')
-user_animal_protein_seq = st.text_area('비교할 동물의 사이토크롬 C 단백질 서열을 입력하세요:')
+user_animal_protein_seq = st.text_area('비교할 동물의 사이토크롬 C 단백질 서열을 입력하세요 예:MGDVEKGKKIFVQKCAQCHTVEKGGKHKTGPNLHGLFRQKTGQAVGFSYTDANKNKGIIWGEDTLMEYLENPKKYIPGTKMIFAGIKKKAEKADLTAYLKKATNDKTNVS')
 
 # 사람의 사이토크롬 C 단백질 서열
 human_protein_seq = "MGDVEKGKKIFIMKCSQCHTVEKGGKHKTGPNLHGLFGRKTGQAPGYSYTAANKNKGIIWGEDTLMEYLENPKKYIPGTKMIFVGIKKKEERADLIAYLKKATNE"
