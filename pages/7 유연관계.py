@@ -88,24 +88,3 @@ if user_animal_protein_seq:
         ax.set_title('사이토크롬 C 단백질 서열 길이 비교', fontproperties=fontprop if fontprop else None)
         ax.set_xticklabels(['사람', user_animal_name], fontproperties=fontprop if fontprop else None)
         st.pyplot(fig)
-
-    # 사용자가 서열을 보고 싶을 경우 출력
-    if st.checkbox('사이토크롬 C 단백질 서열 보기'):
-        st.subheader('사람 사이토크롬 C 단백질 서열')
-        st.text(human_protein_seq)
-
-        st.subheader(f'{user_animal_name} ({user_animal_sci_name}) 사이토크롬 C 단백질 서열')
-        st.text(user_animal_protein_seq)
-else:
-    st.write("유효한 동물 이름을 입력하고 서열을 확인하세요.")
-
-# 데이터 커서 창 만들기
-st.write("## 데이터 입력 커서")
-selected_data = st.selectbox('데이터를 선택하세요:', student_df['이름'] if 'student_data' in st.session_state and st.session_state['student_data'] else [])
-
-if selected_data:
-    selected_entry = student_df[student_df['이름'] == selected_data].iloc[0]
-    st.write(f"### 선택한 데이터:")
-    st.write(f"**이름**: {selected_entry['이름']}")
-    st.write(f"**학명**: {selected_entry['학명']}")
-    st.write(f"**서열**: {selected_entry['서열']}")
