@@ -63,6 +63,9 @@ fig, ax = plt.subplots(figsize=(10, 4))
 ax.bar(['사람', '다른 동물'], [len(human_sequence), len(other_animal_sequence)], color=['blue', 'green'])
 ax.set_ylabel('서열 길이', fontproperties=fontprop if fontprop else None)
 ax.set_title('사이토크롬 C 서열 길이 비교', fontproperties=fontprop if fontprop else None)
+ax.tick_params(axis='x', labelsize=12)
+for label in ax.get_xticklabels():
+    label.set_fontproperties(fontprop if fontprop else None)
 
 # Streamlit에 그래프 출력
 st.pyplot(fig)
