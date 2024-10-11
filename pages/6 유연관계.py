@@ -22,7 +22,6 @@ else:
     st.warning("NanumGothic.ttf 폰트 파일을 찾을 수 없습니다. 기본 폰트를 사용합니다.")
     fontprop = None  # 폰트를 찾지 못했을 경우 기본 폰트를 사용
 
-# Streamlit 웹 페이지 설정
 
 # Gemini API 키 입력 및 설정
 import requests
