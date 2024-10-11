@@ -57,11 +57,16 @@ animal_name = st.text_input("비교할 동물의 학명을 입력하세요:", "P
 if animal_name:
     try:
         response = requests.get(f"https://api.gemini.com/organism/{animal_name}", headers={"Authorization": f"Bearer {api_key}"})
+        st.write(f"API 응답 상태 코드: {response.status_code}")  # 상태 코드 출력
         if response.status_code == 200:
             organism_info = response.json().get('common_name', "정보를 찾을 수 없습니다.")
             st.write(f"{animal_name}는 {organism_info}입니다.")
+        elif response.status_code == 401:
+            st.error("인증 오류: 유효하지 않은 API 키입니다. 올바른 키를 입력해 주세요.")
+        elif response.status_code == 404:
+            st.warning("해당 학명에 대한 정보를 찾을 수 없습니다. 다른 학명을 입력해보세요.")
         else:
-            st.warning("Gemini API에서 생물 정보를 가져오는 데 실패했습니다. 다른 학명을 입력해보세요.")
+            st.warning(f"Gemini API에서 생물 정보를 가져오는 데 실패했습니다. 상태 코드: {response.status_code}")
     except Exception as e:
         st.error(f"API 요청 중 오류가 발생했습니다: {e}")
 
