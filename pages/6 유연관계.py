@@ -2,6 +2,7 @@ import os
 import streamlit as st
 import matplotlib.pyplot as plt
 import matplotlib.font_manager as fm
+import pandas as pd
 
 # 페이지 설정
 st.set_page_config(page_title="사이토크롬 C 서열 비교: 사람 vs 다른 동물", layout="wide")
@@ -48,34 +49,44 @@ animal_common_name = st.text_input("비교할 동물의 이름을 작성해 주�
 animal_name = st.text_input("비교할 동물의 학명을 입력하세요:", "예:Pan troglodytes")
 animal_sequence = st.text_area("비교할 동물의 사이토크롬 C의 염기 서열을 작성해주세요:", "예:MGDVEKGKKIFVQKCAQCHTVEKGGKHKTGPNLHGLFRQKTGQAVGFSYTDANKNKGIIWGEDTLMEYLENPKKYIPGTKMIFAGIKKKAEKADLTAYLKKATND")
 
-# 사람의 사이토크롬 C 서열
-human_sequence = "MGDVEKGKKIFIMKCSQCHTVEKGGKHKTGPNLHGLFGRKTGQAPGYSYTAANKNKGIIWGEDTLMEYLENPKKYIPGTKMIFVGIKKKEERADLIAYLKKATNE"
+# 업로드 버튼 추가
+if st.button('업로드'):
+    if animal_sequence:
+        # 사람의 사이토크롬 C 서열
+        human_sequence = "MGDVEKGKKIFIMKCSQCHTVEKGGKHKTGPNLHGLFGRKTGQAPGYSYTAANKNKGIIWGEDTLMEYLENPKKYIPGTKMIFVGIKKKEERADLIAYLKKATNE"
 
-# 서열 일치율 계산 함수
-def calculate_similarity(seq1, seq2):
-    # 두 서열의 길이가 다를 경우 최소 길이를 기준으로 계산
-    min_length = min(len(seq1), len(seq2))
-    matches = sum(a == b for a, b in zip(seq1[:min_length], seq2[:min_length]))
-    return matches / min_length * 100
+        # 서열 일치율 계산 함수
+        def calculate_similarity(seq1, seq2):
+            # 두 서열의 길이가 다를 경우 최소 길이를 기준으로 계산
+            min_length = min(len(seq1), len(seq2))
+            matches = sum(a == b for a, b in zip(seq1[:min_length], seq2[:min_length]))
+            return matches / min_length * 100
 
-# 사람의 서열 출력
-st.subheader("사람의 사이토크롬 C 서열")
-st.text(human_sequence[:80] + '\n' + human_sequence[80:])
+        # 일치율 계산 및 데이터 정리
+        similarity = calculate_similarity(human_sequence, animal_sequence)
+        data = {
+            '서열 종류': ['사람', animal_common_name],
+            '서열 길이': [len(human_sequence), len(animal_sequence)],
+            '일치율 (%)': [100, similarity]
+        }
+        df = pd.DataFrame(data)
 
-# 일치율 계산 및 출력
-similarity = calculate_similarity(human_sequence, animal_sequence)
-st.write(f"사람과 {animal_common_name}의 서열 일치율: {similarity:.2f}%")
+        # 내용 정리 표 출력
+        st.subheader("내용 정리")
+        st.table(df)
 
-# 서열 비교 시각화
-fig, ax = plt.subplots(figsize=(10, 6))
-labels = ['사람', animal_common_name]
-similarity_values = [100, similarity]
-ax.bar(labels, similarity_values, color=['blue', 'green'])
-ax.set_ylabel('서열 일치율 (%)', fontproperties=fontprop if fontprop else None)
-ax.set_title('사이토크롬 C 서열 일치율 비교', fontproperties=fontprop if fontprop else None)
-ax.tick_params(axis='x', labelsize=10)
-for label in ax.get_xticklabels():
-    label.set_fontproperties(fontprop if fontprop else None)
+        # 서열 비교 시각화
+        fig, ax = plt.subplots(figsize=(10, 6))
+        labels = ['사람', animal_common_name]
+        similarity_values = [100, similarity]
+        ax.bar(labels, similarity_values, color=['blue', 'green'])
+        ax.set_ylabel('서열 일치율 (%)', fontproperties=fontprop if fontprop else None)
+        ax.set_title('사이토크롬 C 서열 일치율 비교', fontproperties=fontprop if fontprop else None)
+        ax.tick_params(axis='x', labelsize=10)
+        for label in ax.get_xticklabels():
+            label.set_fontproperties(fontprop if fontprop else None)
 
-# Streamlit에 그래프 출력
-st.pyplot(fig)
+        # Streamlit에 그래프 출력
+        st.pyplot(fig)
+    else:
+        st.warning("염기 서열을 입력해주세요.")
