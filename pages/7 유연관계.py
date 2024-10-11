@@ -42,12 +42,13 @@ if 'student_data' not in st.session_state:
     st.session_state['student_data'] = []
 
 # 학명 데이터 추가
-if user_animal_name and user_animal_sci_name and user_animal_protein_seq:
+if user_animal_name and user_animal_sci_name and user_animal_protein_seq and st.button('제출'):
     st.session_state['student_data'].append({
         '이름': user_animal_name,
         '학명': user_animal_sci_name,
         '서열': user_animal_protein_seq
     })
+    st.success('학명 데이터가 성공적으로 정리되었습니다!')
 
 # 저장된 학생 데이터를 데이터프레임으로 변환하여 표시
 if st.session_state['student_data']:
