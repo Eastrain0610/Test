@@ -6,3 +6,4 @@ pytz
 networkx
 openai
 numpy
+openpyxl
