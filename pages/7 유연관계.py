@@ -35,7 +35,7 @@ user_animal_sci_name = st.text_input('비교할 동물의 학명을 입력하세
 user_animal_protein_seq = st.text_area('비교할 동물의 사이토크롬 C 단백질 서열을 입력하세요:')
 
 # 사람의 사이토크롬 C 단백질 서열
-human_protein_seq = "MGDVEKGKKIFIMKCSQCHTVEKGGKHKTGPNLHGLFGRKTGQAPGYSYTAANKNKGIIWGEDTLMEYLENPKKYIPGTKMIFVGIKKKEERADLIAYLKKATNE"
+human_protein_seq = "MGDVEKGKKIFIMKCSQCHTVEKGGKHKTGPNLHGLFGRKTGQAPGYSYTAANKNKGIIW"
 
 # 출석한 학생 데이터를 저장할 리스트 초기화
 if 'student_data' not in st.session_state:
@@ -72,12 +72,12 @@ def compare_sequences(seq1, seq2):
     line_length = 60
     for i in range(0, len(aligned_seq1), line_length):
         query_start = i + 1
-        query_end = min(i + line_length, len(aligned_seq1))
+        query_end = min(i + line_length, len(aligned_seq1)) if (i + line_length <= len(aligned_seq1)) else len(aligned_seq1)
         query_line = aligned_seq1[i:i+line_length]
         sbjct_line = aligned_seq2[i:i+line_length]
         diff_line = ''.join('+' if query != sbjct else ' ' for query, sbjct in zip(query_line, sbjct_line))
         query_str = f"Query {query_start:<5} {query_line}  {query_end}"
-        sbjct_str = f"Sbjct {query_start:<5} {sbjct_line}  {query_end}"
+        sbjct_str = f"Sbjct {query_start:<5} {sbjct_line}  {query_end if query_end <= len(aligned_seq2) else len(aligned_seq2)}"
         diff_str = f"       {'':<5} {diff_line}"
         result_str += query_str + "\n" + diff_str + "\n" + sbjct_str + "\n\n"
     
