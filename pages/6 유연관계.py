@@ -7,11 +7,6 @@ import requests
 # 페이지 설정
 st.set_page_config(page_title="사이토크롬 C 서열 비교: 사람 vs 다른 동물", layout="wide")
 
-# Google API 및 Gemini API 키 입력
-api_key = st.text_input("Google 또는 Gemini API 키를 입력하세요:", type="password")
-if not api_key:
-    st.error("이 애플리케이션을 사용하려면 유효한 API 키가 필요합니다.")
-    st.stop()
 
 # 폰트 파일 경로 설정
 possible_paths = [
@@ -50,49 +45,8 @@ plt.rcParams['axes.unicode_minus'] = False
 # 앱 설명
 st.title("사이토크롬 C 서열 비교: 사람 vs 다른 동물")
 
-# 학명 검색 및 입력
-search_term = st.text_input("검색할 동물의 이름 또는 키워드를 입력하세요:", "chimpanzee")
-
-# Google Generative Language API를 사용해 검색어에 따른 설명 생성하기
-if search_term and api_key:
-    try:
-        # Google Generative Language API 호출
-        headers = {
-            'Content-Type': 'application/json',
-        }
-        data = {
-            "prompt": {
-                "text": search_term
-            },
-            "temperature": 0.7,
-            "candidate_count": 1
-        }
-        response = requests.post(
-            f'https://generativelanguage.googleapis.com/v1beta2/models/text-bison-001:generateText?key={api_key}',
-            headers=headers,
-            json=data
-        )
-
-        # API 응답 디버깅
-        st.write(f"API 요청 URL: {response.url}")
-        st.write(f"API 요청 데이터: {data}")
-
-        if response.status_code == 200:
-            response_data = response.json()
-            st.write(f"API 응답 데이터: {response_data}")  # 디버깅을 위해 전체 응답 출력
-            generated_text = response_data.get('candidates', [{}])[0].get('output', "결과 없음")
-            st.write(f"검색 결과: {generated_text}")
-        else:
-            if 'API key expired' in response.text or 'API_KEY_INVALID' in response.text:
-                st.error("API 키가 만료되었거나 유효하지 않습니다. 새 API 키를 발급받아 입력해 주세요.")
-            else:
-                st.error(f"API 호출 실패: 상태 코드 {response.status_code} - {response.text}")
-
-    except Exception as e:
-        st.error(f"오류가 발생했습니다: {e}")
-
-    st.warning("검색 결과가 없으므로 직접 학명을 입력하세요.")
-    animal_name = st.text_input("비교할 동물의 학명을 입력하세요:", "Pan troglodytes")
+# 학명 직접 입력
+animal_name = st.text_input("비교할 동물의 학명을 입력하세요:", "Pan troglodytes")
 
 # 사람의 사이토크롬 C 서열
 human_sequence = "MGDVEKGKKIFIMKCSQCHTVEKGGKHKTGPNLHGLFGRKTGQAPGYSYTAANKNKGIIWGEDTLMEYLENPKKYIPGTKMIFVGIKKKEERADLIAYLKKATNE"
