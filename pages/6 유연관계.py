@@ -60,6 +60,30 @@ def calculate_similarity(seq1, seq2):
     matches = sum(a == b for a, b in zip(seq1[:min_length], seq2[:min_length]))
     return matches / min_length * 100
 
+# 서열 비교 함수
+def align_sequences(query, subject):
+    alignment = []
+    for i, (q, s) in enumerate(zip(query, subject)):
+        if q == s:
+            alignment.append(q)
+        else:
+            alignment.append('+')
+    return ''.join(alignment)
+
+# 서열 정렬 및 출력
+st.subheader("서열 정렬 결과")
+query_aligned = human_sequence
+subject_aligned = animal_sequence[:len(human_sequence)]
+alignment = align_sequences(query_aligned, subject_aligned)
+
+st.text(f"Query  1    {query_aligned[:60]}  60")
+st.text(f"            {alignment[:60]}")
+st.text(f"Sbjct  1    {subject_aligned[:60]}  60")
+
+st.text(f"Query  61   {query_aligned[60:]}  105")
+st.text(f"            {alignment[60:]}")
+st.text(f"Sbjct  61   {subject_aligned[60:]}  105")
+
 # 사람의 서열 출력
 st.subheader("사람의 사이토크롬 C 서열")
 st.text(human_sequence[:80] + '\n' + human_sequence[80:])
