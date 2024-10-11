@@ -73,6 +73,10 @@ if search_term and api_key:
             json=data
         )
 
+        # API 응답 디버깅
+        st.write(f"API 요청 URL: {response.url}")
+        st.write(f"API 요청 데이터: {data}")
+
         if response.status_code == 200:
             response_data = response.json()
             st.write(f"API 응답 데이터: {response_data}")  # 디버깅을 위해 전체 응답 출력
@@ -85,8 +89,7 @@ if search_term and api_key:
                 st.error(f"API 호출 실패: 상태 코드 {response.status_code} - {response.text}")
 
     except Exception as e:
-        st.error(f"오류가 발생했습니다: {e}")
-else:
+        st.error(f"오류가 발생했습니다: {e}")else:
     st.warning("검색 결과가 없으므로 직접 학명을 입력하세요.")
     animal_name = st.text_input("비교할 동물의 학명을 입력하세요:", "Pan troglodytes")
 
