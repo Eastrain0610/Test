@@ -5,7 +5,7 @@ import io
 import sys
 import os
 import matplotlib.font_manager as fm
-from Bio import Seq
+from Bio import Entrez, SeqIO
 
 # 폰트 파일 경로 설정: 다양한 경로에서 시도해 보기
 possible_paths = [
@@ -34,16 +34,30 @@ st.title('사이토크롬 C 서열 비교: 사람 vs 다른 동물')
 user_animal_name = st.text_input('비교할 동물의 이름을 입력하세요 (예: 침팬지):')
 user_animal_sci_name = st.text_input('비교할 동물의 학명을 입력하세요 (예: Pan troglodytes):')
 
-# 사람과 입력한 동물의 사이토크롬 C 단백질 서열 하드코딩
+# NCBI에서 사이토크롬 C 서열 가져오기 함수
+Entrez.email = "your_email@example.com"  # 여기에 자신의 이메일 주소를 입력하세요.
+
+def fetch_cytochrome_c_sequence(organism_name):
+    search_term = f"{organism_name}[Organism] AND cytochrome c"
+    handle = Entrez.esearch(db="nucleotide", term=search_term, retmax=1)
+    record = Entrez.read(handle)
+    handle.close()
+    if record["IdList"]:
+        seq_id = record["IdList"][0]
+        handle = Entrez.efetch(db="nucleotide", id=seq_id, rettype="gb", retmode="text")
+        seq_record = SeqIO.read(handle, "genbank")
+        handle.close()
+        return seq_record.seq.translate(to_stop=True)
+    return None
+
+# 사람과 입력한 동물의 사이토크롬 C 단백질 서열 가져오기
+st.write("사이토크롬 C 서열을 가져오는 중입니다...")
+
 human_protein_seq = "MGDVEKGKKIFIMKCSQCHTVEKGGKHKTGPNLHGLFGRKTGQAPGYSYTAANKNKGIIWGEDTLMEYLENPKKYIPGTKMIFVGIKKKEERADLIAYLKKATNE"
-user_animal_protein_sequences = {
-    '침팬지': "MGDVEKGKKIFVQKCAQCHTVEKGGKHKTGPNLHGLFRQKTGQAVGFSYTDANKNKGIIWGEDTLMEYLENPKKYIPGTKMIFAGIKKKAEKADLTAYLKKATNDKTNVS",
-    '고릴라': "MGDVEKGKKIFVQKCAQCHTVEKGGKHKTGPNLHGLFRQKTGQAVGFSYTDANKNKGIIWGEDTLMEYLEKPKKYIPGTKMIFAGIKKKAEKADLTAYLKKATNE",
-    '쥐': "MGDVEKGKKIFIMKCSQCHTVEKGGKHKTGPNLHGLFGRKTGQAPGYSYTAANKNKGIIWGEDTLMEYLENPKKYIPGTKMIFVGIKKKEEKADLIAYLKKATNE",
-    '소': "MGDVEKGKKIFVQKCSQCHTVEKGGKHKTGPNLHGLFGRKTGQAPGYSYTAANKNKGIIWGEDTLMEYLENPKKYIPGTKMIFAGIKKKETKADLTAYLKKATNE",
-    '돼지': "MGDVEKGKKIFIMKCAQCHTVEKGGKHKTGPNLHGLFGRKTGQAPGYSYTAANKNKGIIWGEDTLMEYLEKPKKYIPGTKMIFVGIKKKETKADLTAYLKKATNE"
-}
-user_animal_protein_seq = user_animal_protein_sequences.get(user_animal_name, None)
+user_animal_protein_seq = None
+
+if user_animal_sci_name:
+    user_animal_protein_seq = fetch_cytochrome_c_sequence(user_animal_sci_name)
 
 # 서열 비교 및 결과 출력
 def compare_sequences(seq1, seq2):
