@@ -1,24 +1,27 @@
 import streamlit as st
-from Bio import SeqIO
 from Bio.Align import PairwiseAligner
-import os
 
 # Streamlit 앱 제목
 st.title("사람 사이토크롬 C 유사도 비교")
 
-# 파일 업로드 섹션
-st.header("FASTA 파일 업로드")
-uploaded_files = st.file_uploader("사이토크롬 C 서열이 포함된 두 개 이상의 FASTA 파일을 업로드하세요.", accept_multiple_files=True)
+# 염기서열 입력 섹션
+st.header("사이토크롬 C 염기서열 입력")
+sequences_input = st.text_area("각 염기서열을 FASTA 형식으로 입력하세요. 여러 서열을 비교하려면 각각을 '>'로 시작하여 구분하세요.", height=200)
 
-if uploaded_files:
+if sequences_input:
     sequences = []
-    for uploaded_file in uploaded_files:
-        # FASTA 파일에서 서열 가져오기
-        with open(uploaded_file.name, "w") as f:
-            f.write(uploaded_file.getvalue().decode("utf-8"))
-        for record in SeqIO.parse(uploaded_file.name, "fasta"):
-            sequences.append(record)
-        os.remove(uploaded_file.name)
+    current_sequence = ""
+    current_id = ""
+    for line in sequences_input.splitlines():
+        if line.startswith(">"):
+            if current_sequence:
+                sequences.append((current_id, current_sequence))
+            current_id = line[1:].strip()
+            current_sequence = ""
+        else:
+            current_sequence += line.strip()
+    if current_sequence:
+        sequences.append((current_id, current_sequence))
 
     # 사이토크롬 C 서열 비교
     if len(sequences) >= 2:
@@ -29,10 +32,10 @@ if uploaded_files:
         # 두 서열 간의 유사도 계산 및 표시
         for i in range(len(sequences)):
             for j in range(i + 1, len(sequences)):
-                alignment = aligner.align(sequences[i].seq, sequences[j].seq)
-                similarity = alignment.score / min(len(sequences[i].seq), len(sequences[j].seq)) * 100
-                st.write(f"{sequences[i].id}와 {sequences[j].id}의 유사도: {similarity:.2f}%")
+                alignment = aligner.align(sequences[i][1], sequences[j][1])
+                similarity = alignment.score / min(len(sequences[i][1]), len(sequences[j][1])) * 100
+                st.write(f"{sequences[i][0]}와 {sequences[j][0]}의 유사도: {similarity:.2f}%")
     else:
-        st.warning("두 개 이상의 FASTA 서열을 업로드해야 합니다.")
+        st.warning("두 개 이상의 염기서열을 입력해야 합니다.")
 else:
-    st.info("FASTA 파일을 업로드해 주세요.")
+    st.info("염기서열을 입력해 주세요.")
