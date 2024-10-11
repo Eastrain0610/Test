@@ -50,33 +50,53 @@ plt.rcParams['axes.unicode_minus'] = False
 # 앱 설명
 st.title("사이토크롬 C 서열 비교: 사람 vs 다른 동물")
 
-# 학명 입력 및 생물 정보 표시
-animal_name = st.text_input("비교할 동물의 학명을 입력하세요:", "Pan troglodytes")
+# 학명 검색 및 입력
+search_term = st.text_input("검색할 동물의 이름 또는 키워드를 입력하세요:", "chimpanzee")
+
+# Gemini API를 사용해 검색어에 따른 생물 목록 검색하기
+if search_term:
+    try:
+        search_response = requests.get(f"https://api.gemini.com/search?query={search_term}", headers={"Authorization": f"Bearer {api_key}"})
+        if search_response.status_code == 200:
+            search_results = search_response.json().get('results', [])
+            if search_results:
+                animal_name = st.selectbox("검색 결과에서 선택하세요:", [result['scientific_name'] for result in search_results])
+            else:
+                st.warning("검색 결과가 없습니다. 다른 검색어를 입력해보세요.")
+        elif search_response.status_code == 401:
+            st.error("인증 오류: 유효하지 않은 API 키입니다. 올바른 키를 입력해 주세요.")
+        else:
+            st.warning(f"Gemini API에서 검색 결과를 가져오는 데 실패했습니다. 상태 코드: {search_response.status_code}")
+    except Exception as e:
+        st.error(f"API 요청 중 오류가 발생했습니다: {e}")
+else:
+    animal_name = st.text_input("비교할 동물의 학명을 입력하세요:", "Pan troglodytes")
 
 # Gemini API를 사용해 학명에 따른 생물 정보 가져오기
 if animal_name:
     try:
-        # 테스트를 위해 샘플 응답 데이터 사용
-        sample_data = {
-            "Pan troglodytes": "침팬지",
-            "Homo sapiens": "인간",
-            "Canis lupus familiaris": "개"
-        }
-        if animal_name in sample_data:
-            organism_info = sample_data[animal_name]
+        response = requests.get(f"https://api.gemini.com/organism/{animal_name}", headers={"Authorization": f"Bearer {api_key}"})
+        st.write(f"API 응답 상태 코드: {response.status_code}")  # 상태 코드 출력
+        if response.status_code == 200:
+            organism_info = response.json().get('common_name', "정보를 찾을 수 없습니다.")
             st.write(f"{animal_name}는 {organism_info}입니다.")
-        else:
-            response = requests.get(f"https://api.gemini.com/organism/{animal_name}", headers={"Authorization": f"Bearer {api_key}"})
-            st.write(f"API 응답 상태 코드: {response.status_code}")  # 상태 코드 출력
-            if response.status_code == 200:
-                organism_info = response.json().get('common_name', "정보를 찾을 수 없습니다.")
+        elif response.status_code == 401:
+            st.error("인증 오류: 유효하지 않은 API 키입니다. 올바른 키를 입력해 주세요.")
+        elif response.status_code == 404:
+            st.warning("해당 학명에 대한 정보를 찾을 수 없습니다. 샘플 데이터에서 정보를 찾고 있습니다...")
+            # 샘플 응답 데이터 사용
+            sample_data = {
+                "Pan troglodytes": "침팬지",
+                "Homo sapiens": "인간",
+                "Canis lupus familiaris": "개"
+            }
+            if animal_name in sample_data:
+                organism_info = sample_data[animal_name]
                 st.write(f"{animal_name}는 {organism_info}입니다.")
-            elif response.status_code == 401:
-                st.error("인증 오류: 유효하지 않은 API 키입니다. 올바른 키를 입력해 주세요.")
-            elif response.status_code == 404:
-                st.warning("해당 학명에 대한 정보를 찾을 수 없습니다. 입력 예시: 'Pan troglodytes' 또는 'Homo sapiens'와 같은 형식을 사용해보세요.")
             else:
-                st.warning(f"Gemini API에서 생물 정보를 가져오는 데 실패했습니다. 상태 코드: {response.status_code}")
+                st.warning("샘플 데이터에서도 정보를 찾을 수 없습니다. 입력 예시: 'Pan troglodytes' 또는 'Homo sapiens'와 같은 형식을 사용해보세요.")
+        else:
+            st.warning(f"Gemini API에서 생물 정보를 가져오는 데 실패했습니다. 상태 코드: {response.status_code}")
     except Exception as e:
         st.error(f"API 요청 중 오류가 발생했습니다: {e}")
 
