@@ -45,12 +45,15 @@ st.title("사이토크롬 C 서열 비교: 사람 vs 다른 동물")
 st.write("이 애플리케이션은 사람과 다른 동물의 사이토크롬 C 서열을 비교합니다. 나눔 고딕 폰트를 사용하여 한글을 지원합니다.")
 
 # 서열 데이터 (예시)
-human_sequence = "MGDVEKGKKIFIMKCSQCHTVEKGGKHKTGP"
+human_sequence = "MGDVEKGKKIFIMKCSQCHTVEKGGKHKTGPNLHGLFGRKTGQAPGYSYTAANKNKGIIWGEDTLMEYLENPKKYIPGTKMIFVGIKKKEERADLIAYLKKATNE"
 
 # 사용자 입력을 통한 다른 동물의 서열 입력 (3~4가지 서열 입력)
 other_animal_sequences = []
+other_animal_names = []
 for i in range(1, 5):
-    other_animal_sequence = st.text_input(f"다른 동물 {i}의 사이토크롬 C 서열을 입력하세요:", f"MGDVEKGKKIFIMKCSQCHTVEKGGKHKTAP")
+    animal_name = st.text_input(f"다른 동물 {i}의 학명을 입력하세요:", f"Animal {i}")
+    other_animal_names.append(animal_name)
+    other_animal_sequence = st.text_input(f"{animal_name}의 사이토크롬 C 서열을 입력하세요:", f"MGDVEKGKKIFIMKCSQCHTVEKGGKHKTAP")
     other_animal_sequences.append(other_animal_sequence)
 
 # 서열 일치율 계산
@@ -61,22 +64,22 @@ def calculate_similarity(seq1, seq2):
 # 결과 출력
 st.write("사람과 다른 동물들의 사이토크롬 C 서열 일치율:")
 similarities = []
-for i, other_animal_sequence in enumerate(other_animal_sequences):
+for i, (animal_name, other_animal_sequence) in enumerate(zip(other_animal_names, other_animal_sequences)):
     similarity = calculate_similarity(human_sequence, other_animal_sequence)
     similarities.append(similarity)
-    st.write(f"사람과 다른 동물 {i+1}의 서열 일치율: {similarity:.2f}%")
+    st.write(f"사람과 {animal_name}의 서열 일치율: {similarity:.2f}%")
 
 # 서열 데이터 출력
 st.subheader("사람의 사이토크롬 C 서열")
-st.text(human_sequence)
+st.text(human_sequence[:80] + '\n' + human_sequence[80:])
 
-for i, other_animal_sequence in enumerate(other_animal_sequences):
-    st.subheader(f"다른 동물 {i+1}의 사이토크롬 C 서열")
+for i, (animal_name, other_animal_sequence) in enumerate(zip(other_animal_names, other_animal_sequences)):
+    st.subheader(f"{animal_name}의 사이토크롬 C 서열")
     st.text(other_animal_sequence)
 
 # 서열 비교 시각화
 fig, ax = plt.subplots(figsize=(10, 6))
-labels = [f'사람 vs 다른 동물 {i+1}' for i in range(len(other_animal_sequences))]
+labels = [f'사람 vs {animal_name}' for animal_name in other_animal_names]
 similarity_values = similarities
 ax.bar(labels, similarity_values, color=['blue'] * len(other_animal_sequences))
 ax.set_ylabel('서열 일치율 (%)', fontproperties=fontprop if fontprop else None)
