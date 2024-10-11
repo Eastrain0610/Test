@@ -1,47 +1,68 @@
 import streamlit as st
-from Bio.Align import PairwiseAligner
+from Bio import Entrez, SeqIO
+import matplotlib.pyplot as plt
+from io import StringIO
+import requests
 
-# Streamlit 앱 제목
-st.title("사람 사이토크롬 C 유사도 비교")
+# Streamlit 앱 제목 설정
+st.title('사이토크롬 C 서열 비교: 사람 vs 다른 동물')
 
-# 염기서열 입력 섹션
-st.header("사이토크롬 C 염기서열 입력 (다른 동물 서열을 입력하세요)")
-sequences_input = st.text_area("각 염기서열을 FASTA 형식으로 입력하세요. 여러 서열을 비교하려면 각각을 '>'로 시작하여 구분하세요.", height=200)
+# 사용자가 선택할 수 있는 동물 옵션
+animal_options = ['침팬지', '고릴라', '쥐', '소', '돼지']
+selected_animal = st.selectbox('비교할 동물을 선택하세요:', animal_options)
 
-# 기본 사람 사이토크롬 C 서열 추가
-default_human_cytochrome_c = (">Human Cytochrome C\n"
-                              "MGDVEKGKKIFIMKCSQCHTVEKGGKHKTGPNLHGLFGRKTGQAPGYSYTAANKNKGIIWGEDTLMEYLE\n"
-                              "NPKKYIPGTKMIFVGIKKKEERADLIAYLKKATNE")
-sequences_input = default_human_cytochrome_c + "\n" + sequences_input
+# NCBI에서 사이토크롬 C 서열 가져오기 함수
+Entrez.email = "your_email@example.com"  # 여기에 자신의 이메일 주소를 입력하세요.
 
-if sequences_input:
-    sequences = []
-    current_sequence = ""
-    current_id = ""
-    for line in sequences_input.splitlines():
-        if line.startswith(">"):
-            if current_sequence:
-                sequences.append((current_id, current_sequence))
-            current_id = line[1:].strip()
-            current_sequence = ""
-        else:
-            current_sequence += line.strip()
-    if current_sequence:
-        sequences.append((current_id, current_sequence))
+def fetch_cytochrome_c_sequence(organism_name):
+    search_term = f"{organism_name}[Organism] AND cytochrome c"
+    handle = Entrez.esearch(db="nucleotide", term=search_term, retmax=1)
+    record = Entrez.read(handle)
+    handle.close()
+    if record["IdList"]:
+        seq_id = record["IdList"][0]
+        handle = Entrez.efetch(db="nucleotide", id=seq_id, rettype="gb", retmode="text")
+        seq_record = SeqIO.read(handle, "genbank")
+        handle.close()
+        return seq_record.seq
+    return None
 
-    # 사이토크롬 C 서열 비교
-    if len(sequences) >= 2:
-        st.header("서열 간의 유사도 계산")
-        aligner = PairwiseAligner()
-        aligner.mode = 'global'
+# 사람과 사용자가 선택한 동물의 사이토크롬 C 서열 가져오기
+st.write("사이토크롬 C 서열을 가져오는 중입니다...")
 
-        # 두 서열 간의 유사도 계산 및 표시
-        for i in range(len(sequences)):
-            for j in range(i + 1, len(sequences)):
-                alignment = aligner.align(sequences[i][1], sequences[j][1])
-                similarity = alignment.score / min(len(sequences[i][1]), len(sequences[j][1])) * 100
-                st.write(f"{sequences[i][0]}와 {sequences[j][0]}의 유사도: {similarity:.2f}%")
-    else:
-        st.warning("두 개 이상의 염기서열을 입력해야 합니다.")
+human_seq = fetch_cytochrome_c_sequence("Homo sapiens")
+animal_seq = fetch_cytochrome_c_sequence(selected_animal)
+
+# 서열 비교 및 결과 출력
+def compare_sequences(seq1, seq2):
+    if not seq1 or not seq2:
+        return None, "서열을 가져오지 못했습니다. 다시 시도해 주세요."
+    
+    # 간단한 서열 비교: 동일한 염기 수와 비율 계산
+    min_len = min(len(seq1), len(seq2))
+    matches = sum(1 for i in range(min_len) if seq1[i] == seq2[i])
+    similarity_percentage = (matches / min_len) * 100
+    return similarity_percentage, f"유사도: {similarity_percentage:.2f}%"
+
+similarity, message = compare_sequences(human_seq, animal_seq)
+
+if similarity is not None:
+    st.write(message)
 else:
-    st.info("염기서열을 입력해 주세요.")
+    st.write("서열 비교에 실패했습니다. 다시 시도해 주세요.")
+
+# 그래프 시각화
+if similarity is not None:
+    fig, ax = plt.subplots()
+    ax.bar(['사람', selected_animal], [len(human_seq), len(animal_seq)], color=['blue', 'green'])
+    ax.set_ylabel('서열 길이')
+    ax.set_title('사이토크롬 C 서열 길이 비교')
+    st.pyplot(fig)
+
+# 사용자가 서열을 보고 싶을 경우 출력
+if st.checkbox('사이토크롬 C 서열 보기'):
+    st.subheader('사람 사이토크롬 C 서열')
+    st.text(str(human_seq))
+
+    st.subheader(f'{selected_animal} 사이토크롬 C 서열')
+    st.text(str(animal_seq))
