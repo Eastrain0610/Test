@@ -86,6 +86,9 @@ st.text(format_alignment_line("Query", 61, query_aligned[60:]))
 st.text(f"            {alignment[60:]}")
 st.text(format_alignment_line("Sbjct", 61, subject_aligned[60:]))
 
+# 서열 정렬 결과 수정 가능하게 텍스트 창 추가
+alignment_correction = st.text_area("서열 정렬 결과에 대한 수정 의견을 입력하세요:", "예: 차이점이 명확하지 않습니다. 서열 간의 공백을 추가해 주세요.")
+
 # 사람의 서열 출력
 st.subheader("사람의 사이토크롬 C 서열")
 st.text(human_sequence[:80] + '\n' + human_sequence[80:])
