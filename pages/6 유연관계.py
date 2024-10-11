@@ -80,7 +80,7 @@ if st.button('업로드'):
         output = io.BytesIO()
         with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
             df.to_excel(writer, index=False, sheet_name='서열 비교 결과')
-            writer.save()
+            writer.close()
             processed_data = output.getvalue()
 
         st.download_button(label='엑셀 파일 다운로드',
