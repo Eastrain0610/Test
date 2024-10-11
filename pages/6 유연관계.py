@@ -58,34 +58,6 @@ def calculate_similarity(seq1, seq2):
     matches = sum(a == b for a, b in zip(seq1[:min_length], seq2[:min_length]))
     return matches / min_length * 100
 
-# 서열 비교 함수
-def align_sequences(query, subject):
-    alignment = []
-    for i, (q, s) in enumerate(zip(query, subject)):
-        if q == s:
-            alignment.append(q)  # 일치하는 염기 서열 그대로 표시
-        else:
-            alignment.append(' ')  # 불일치하는 부분은 공백으로 표시
-    return ''.join(alignment)
-
-# 들여쓰기와 간격을 맞추기 위해 각 서열의 출력 부분을 일정하게 정렬합니다.
-def format_alignment_line(label, index, sequence, length=60):
-    return f"{label:<6}{index:<4} {sequence[:length]:<{length}} {index + length - 1}"
-
-# 서열 정렬 및 출력
-st.subheader("서열 정렬 결과 (수정 가능)")
-query_aligned = st.text_area("사람의 서열 (Query)", human_sequence)
-subject_aligned = st.text_area("비교할 동물의 서열 (Sbjct)", animal_sequence)
-alignment = align_sequences(query_aligned, subject_aligned)
-
-st.text(format_alignment_line("Query", 1, query_aligned))
-st.text(f"            {alignment[:60]}")
-st.text(format_alignment_line("Sbjct", 1, subject_aligned))
-
-st.text(format_alignment_line("Query", 61, query_aligned[60:]))
-st.text(f"            {alignment[60:]}")
-st.text(format_alignment_line("Sbjct", 61, subject_aligned[60:]))
-
 # 사람의 서열 출력
 st.subheader("사람의 사이토크롬 C 서열")
 st.text(human_sequence[:80] + '\n' + human_sequence[80:])
