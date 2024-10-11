@@ -79,7 +79,10 @@ if search_term and api_key:
             generated_text = response_data.get('candidates', [{}])[0].get('output', "결과 없음")
             st.write(f"검색 결과: {generated_text}")
         else:
-            st.error(f"API 호출 실패: 상태 코드 {response.status_code} - {response.text}")
+            if 'API key expired' in response.text:
+                st.error("API 키가 만료되었습니다. 새 API 키를 발급받아 입력해 주세요.")
+            else:
+                st.error(f"API 호출 실패: 상태 코드 {response.status_code} - {response.text}")
 
     except Exception as e:
         st.error(f"오류가 발생했습니다: {e}")
