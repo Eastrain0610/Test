@@ -12,7 +12,7 @@ animal_options = ['침팬지', '고릴라', '쥐', '소', '돼지']
 selected_animal = st.selectbox('비교할 동물을 선택하세요:', animal_options)
 
 # NCBI에서 사이토크롬 C 서열 가져오기 함수
-Entrez.email = "your_email@example.com"  # 여기에 자신의 이메일 주소를 입력하세요.
+Entrez.email = "dws0610@naver.com"  # 여기에 자신의 이메일 주소를 입력하세요.
 
 def fetch_cytochrome_c_sequence(organism_name):
     search_term = f"{organism_name}[Organism] AND cytochrome c"
