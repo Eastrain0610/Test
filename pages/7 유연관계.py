@@ -57,21 +57,26 @@ if st.session_state['student_data']:
     st.dataframe(student_df)
 
 # 서열 비교 및 결과 출력
+from Bio import pairwise2
+from Bio.pairwise2 import format_alignment
+
 def compare_sequences(seq1, seq2):
     if not seq1 or not seq2:
         return None, "서열을 가져오지 못했습니다. 다시 시도해 주세요."
     
-    # 간단한 서열 비교: 동일한 아미노산 수와 비율 계산
-    min_len = min(len(seq1), len(seq2))
-    matches = sum(1 for i in range(min_len) if seq1[i] == seq2[i])
-    similarity_percentage = (matches / min_len) * 100
-    return similarity_percentage, f"유사도: {similarity_percentage:.2f}%"
+    # BioPython의 pairwise2를 이용한 정렬 및 비교
+    alignments = pairwise2.align.globalxx(seq1, seq2)
+    best_alignment = alignments[0]
+    alignment_str = format_alignment(*best_alignment)
+    similarity_percentage = (best_alignment.score / len(seq1)) * 100
+    return similarity_percentage, alignment_str
 
 if user_animal_protein_seq:
-    similarity, message = compare_sequences(human_protein_seq, user_animal_protein_seq)
+    similarity, alignment_result = compare_sequences(human_protein_seq, user_animal_protein_seq)
 
     if similarity is not None:
-        st.write(message)
+        st.write(f"유사도: {similarity:.2f}%")
+        st.text(alignment_result)
     else:
         st.write("서열 비교에 실패했습니다. 다시 시도해 주세요.")
 
