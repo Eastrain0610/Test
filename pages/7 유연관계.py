@@ -68,8 +68,18 @@ def compare_sequences(seq1, seq2):
     alignments = pairwise2.align.globalxx(seq1, seq2)
     best_alignment = alignments[0]
     alignment_str = format_alignment(*best_alignment)
-    similarity_percentage = (best_alignment.score / len(seq1)) * 100
-    return similarity_percentage, alignment_str
+
+    # Query와 Sbjct 서열을 정렬하여 보기 쉽게 표현
+    aligned_seq1, aligned_seq2, score, start, end = best_alignment
+    result_str = ""
+    line_length = 60
+    for i in range(0, len(aligned_seq1), line_length):
+        query_line = f"Query {i+1:<5}{aligned_seq1[i:i+line_length]}  {i+line_length}"
+        sbjct_line = f"Sbjct {i+1:<5}{aligned_seq2[i:i+line_length]}  {i+line_length}"
+        result_str += query_line + "\n" + sbjct_line + "\n\n"
+    
+    similarity_percentage = (best_alignment.score / min(len(seq1), len(seq2))) * 100
+    return similarity_percentage, result_str
 
 if user_animal_protein_seq:
     similarity, alignment_result = compare_sequences(human_protein_seq, user_animal_protein_seq)
@@ -98,14 +108,3 @@ if user_animal_protein_seq:
         st.text(user_animal_protein_seq)
 else:
     st.write("유효한 동물 이름을 입력하고 서열을 확인하세요.")
-
-# 데이터 커서 창 만들기
-st.write("## 데이터 입력 커서")
-selected_data = st.selectbox('데이터를 선택하세요:', student_df['이름'] if 'student_data' in st.session_state and st.session_state['student_data'] else [])
-
-if selected_data:
-    selected_entry = student_df[student_df['이름'] == selected_data].iloc[0]
-    st.write(f"### 선택한 데이터:")
-    st.write(f"**이름**: {selected_entry['이름']}")
-    st.write(f"**학명**: {selected_entry['학명']}")
-    st.write(f"**서열**: {selected_entry['서열']}")
