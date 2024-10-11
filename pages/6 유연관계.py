@@ -61,25 +61,22 @@ if search_term and api_key:
             'Content-Type': 'application/json',
         }
         data = {
-            "contents": [
-                {
-                    "parts": [
-                        {
-                            "text": search_term
-                        }
-                    ]
-                }
-            ]
+            "prompt": {
+                "text": search_term
+            },
+            "temperature": 0.7,
+            "candidate_count": 1
         }
         response = requests.post(
-            f'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key={api_key}',
+            f'https://generativelanguage.googleapis.com/v1beta2/models/text-bison-001:generateText?key={api_key}',
             headers=headers,
             json=data
         )
 
         if response.status_code == 200:
             response_data = response.json()
-            generated_text = response_data.get('contents', [{}])[0].get('parts', [{}])[0].get('text', "결과 없음")
+            st.write(f"API 응답 데이터: {response_data}")  # 디버깅을 위해 전체 응답 출력
+            generated_text = response_data.get('candidates', [{}])[0].get('output', "결과 없음")
             st.write(f"검색 결과: {generated_text}")
         else:
             st.error(f"API 호출 실패: 상태 코드 {response.status_code} - {response.text}")
