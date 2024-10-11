@@ -2,6 +2,7 @@ import os
 import streamlit as st
 import matplotlib.pyplot as plt
 import matplotlib.font_manager as fm
+import pandas as pd
 
 # 페이지 설정
 st.set_page_config(page_title="사이토크롬 C 서열 비교: 사람 vs 다른 동물", layout="wide")
@@ -108,3 +109,20 @@ for label in ax.get_xticklabels():
 
 # Streamlit에 그래프 출력
 st.pyplot(fig)
+
+# 동물의 정보 (이름, 학명, 염기 서열)을 담은 데이터프레임 생성
+data = {
+    "동물의 이름": [animal_common_name],
+    "학명": [animal_name],
+    "염기 서열": [animal_sequence]
+}
+df = pd.DataFrame(data)
+
+# 엑셀 파일로 저장
+excel_path = "/mnt/data/cytochrome_c_comparison.xlsx"
+df.to_excel(excel_path, index=False)
+
+# 파일 다운로드 링크 제공
+st.subheader("동물의 정보 엑셀 파일")
+st.write("아래 버튼을 클릭하여 동물의 이름, 학명, 염기 서열 정보를 담은 엑셀 파일을 다운로드하세요.")
+st.download_button(label="엑셀 파일 다운로드", data=open(excel_path, "rb"), file_name="cytochrome_c_comparison.xlsx")
