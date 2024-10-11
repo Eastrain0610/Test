@@ -64,7 +64,7 @@ if animal_name:
         elif response.status_code == 401:
             st.error("인증 오류: 유효하지 않은 API 키입니다. 올바른 키를 입력해 주세요.")
         elif response.status_code == 404:
-            st.warning("해당 학명에 대한 정보를 찾을 수 없습니다. 다른 학명을 입력해보세요.")
+            st.warning("해당 학명에 대한 정보를 찾을 수 없습니다. 입력 예시: 'Pan troglodytes' 또는 'Homo sapiens'와 같은 형식을 사용해보세요.")
         else:
             st.warning(f"Gemini API에서 생물 정보를 가져오는 데 실패했습니다. 상태 코드: {response.status_code}")
     except Exception as e:
