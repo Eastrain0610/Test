@@ -47,17 +47,7 @@ st.write("이 애플리케이션은 사람과 다른 동물의 사이토크롬 C
 # 사람의 사이토크롬 C 서열
 human_sequence = "MGDVEKGKKIFIMKCSQCHTVEKGGKHKTGPNLHGLFGRKTGQAPGYSYTAANKNKGIIWGEDTLMEYLENPKKYIPGTKMIFVGIKKKEERADLIAYLKKATNE"
 
-# 사용자 입력을 통한 학명 입력 및 서열 입력
-animal_name = st.text_input("다른 동물의 학명을 입력하세요:", "Animal 1")
-other_animal_sequence = st.text_input(f"{animal_name}의 사이토크롬 C 서열을 입력하세요:", "MGDVEKGKKIFIMKCSQCHTVEKGGKHKTAP")
 
-# 입력된 학명에 해당하는 서열을 가져오기
-# 사용자 입력을 통한 다른 동물의 서열 입력 (최대 2가지 서열 입력)
-other_animal_sequences = []
-other_animal_names = []
-for i in range(1, 3):
-    animal_name = st.text_input(f"다른 동물 {i}의 학명을 입력하세요:", f"Animal {i}")
-    other_animal_names.append(animal_name)
     other_animal_sequence = st.text_input(f"{animal_name}의 사이토크롬 C 서열을 입력하세요:", f"MGDVEKGKKIFIMKCSQCHTVEKGGKHKTAP")
     other_animal_sequences.append(other_animal_sequence)
 
@@ -69,8 +59,6 @@ def calculate_similarity(seq1, seq2):
 # 결과 출력
 st.write("사람과 다른 동물들의 사이토크롬 C 서열 일치율:")
 similarities = []
-for i, (animal_name, other_animal_sequence) in enumerate(zip(other_animal_names[:2], other_animal_sequences[:2])):
-    similarity = calculate_similarity(human_sequence, other_animal_sequence)
     similarities.append(similarity)
     st.write(f"사람과 {animal_name}의 서열 일치율: {similarity:.2f}%")
 
@@ -78,14 +66,11 @@ for i, (animal_name, other_animal_sequence) in enumerate(zip(other_animal_names[
 st.subheader("사람의 사이토크롬 C 서열")
 st.text(human_sequence[:80] + '\n' + human_sequence[80:])
 
-for i, (animal_name, other_animal_sequence) in enumerate(zip(other_animal_names, other_animal_sequences)):
-    st.subheader(f"{animal_name}의 사이토크롬 C 서열")
-    st.text(other_animal_sequence)
 
 # 서열 비교 시각화
 fig, ax = plt.subplots(figsize=(10, 6))
-labels = [f'사람 vs {animal_name}' for animal_name in other_animal_names[:2]]
-similarity_values = similarities[:2]
+labels = ['사람']
+similarity_values = []
 ax.bar(labels, similarity_values, color=['blue'] * len(other_animal_sequences))
 ax.set_ylabel('서열 일치율 (%)', fontproperties=fontprop if fontprop else None)
 ax.set_title('사이토크롬 C 서열 일치율 비교', fontproperties=fontprop if fontprop else None)
