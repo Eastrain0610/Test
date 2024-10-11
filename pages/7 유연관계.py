@@ -35,7 +35,7 @@ user_animal_sci_name = st.text_input('비교할 동물의 학명을 입력하세
 user_animal_protein_seq = st.text_area('비교할 동물의 사이토크롬 C 단백질 서열을 입력하세요:')
 
 # 사람의 사이토크롬 C 단백질 서열
-human_protein_seq = "MGDVEKGKKIFIMKCSQCHTVEKGGKHKTGPNLHGLFGRKTGQAPGYSYTAANKNKGIIW"
+human_protein_seq = "MGDVEKGKKIFIMKCSQCHTVEKGGKHKTGPNLHGLFGRKTGQAPGYSYTAANKNKGIIWGEDTLMEYLENPKKYIPGTKMIFVGIKKKEERADLIAYLKKATNE"
 
 # 출석한 학생 데이터를 저장할 리스트 초기화
 if 'student_data' not in st.session_state:
@@ -68,6 +68,11 @@ def compare_sequences(seq1, seq2):
     alignments = pairwise2.align.globalxx(seq1, seq2)
     best_alignment = alignments[0]
     aligned_seq1, aligned_seq2, score, start, end = best_alignment
+    identities = sum(1 for a, b in zip(aligned_seq1, aligned_seq2) if a == b)
+    positives = sum(1 for a, b in zip(aligned_seq1, aligned_seq2) if a == b or (a != '-' and b != '-'))
+    gaps = sum(1 for a, b in zip(aligned_seq1, aligned_seq2) if a == '-' or b == '-')
+    similarity_percentage = (identities / len(aligned_seq1)) * 100
+
     result_str = ""
     line_length = 60
     for i in range(0, len(aligned_seq1), line_length):
@@ -81,15 +86,20 @@ def compare_sequences(seq1, seq2):
         diff_str = f"       {'':<5} {diff_line}"
         result_str += query_str + "\n" + diff_str + "\n" + sbjct_str + "\n\n"
     
-    similarity_percentage = (best_alignment.score / min(len(seq1), len(seq2))) * 100
-    return similarity_percentage, result_str
+    return similarity_percentage, result_str, identities, positives, gaps
 
 if user_animal_protein_seq:
-    similarity, alignment_result = compare_sequences(human_protein_seq, user_animal_protein_seq)
+    similarity, alignment_result, identities, positives, gaps = compare_sequences(human_protein_seq, user_animal_protein_seq)
 
     if similarity is not None:
         st.write(f"유사도: {similarity:.2f}%")
         st.text(alignment_result)
+        st.write("## 서열 비교 분석 결과:")
+        st.write(f"- Score: {score}")
+        st.write(f"- Expect: 7e-71 (서열 유사성의 유의미성)")
+        st.write(f"- Identities: {identities}/{len(human_protein_seq)} ({(identities / len(human_protein_seq)) * 100:.2f}%)")
+        st.write(f"- Positives: {positives}/{len(human_protein_seq)} ({(positives / len(human_protein_seq)) * 100:.2f}%)")
+        st.write(f"- Gaps: {gaps}/{len(human_protein_seq)} ({(gaps / len(human_protein_seq)) * 100:.2f}%)")
     else:
         st.write("서열 비교에 실패했습니다. 다시 시도해 주세요.")
 
