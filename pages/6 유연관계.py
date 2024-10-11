@@ -89,7 +89,8 @@ if search_term and api_key:
                 st.error(f"API 호출 실패: 상태 코드 {response.status_code} - {response.text}")
 
     except Exception as e:
-        st.error(f"오류가 발생했습니다: {e}")else:
+        st.error(f"오류가 발생했습니다: {e}")
+
     st.warning("검색 결과가 없으므로 직접 학명을 입력하세요.")
     animal_name = st.text_input("비교할 동물의 학명을 입력하세요:", "Pan troglodytes")
 
