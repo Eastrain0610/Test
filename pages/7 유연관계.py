@@ -98,3 +98,14 @@ if user_animal_protein_seq:
         st.text(user_animal_protein_seq)
 else:
     st.write("유효한 동물 이름을 입력하고 서열을 확인하세요.")
+
+# 데이터 커서 창 만들기
+st.write("## 데이터 입력 커서")
+selected_data = st.selectbox('데이터를 선택하세요:', student_df['이름'] if 'student_data' in st.session_state and st.session_state['student_data'] else [])
+
+if selected_data:
+    selected_entry = student_df[student_df['이름'] == selected_data].iloc[0]
+    st.write(f"### 선택한 데이터:")
+    st.write(f"**이름**: {selected_entry['이름']}")
+    st.write(f"**학명**: {selected_entry['학명']}")
+    st.write(f"**서열**: {selected_entry['서열']}")
