@@ -48,7 +48,7 @@ st.title("사이토크롬 C 서열 비교: 사람 vs 다른 동물")
 # 동물 이름 및 학명, 서열 입력
 animal_common_name = st.text_input("비교할 동물의 이름을 작성해 주세요:", "침팬지")
 animal_name = st.text_input("비교할 동물의 학명을 입력하세요:", "Pan troglodytes")
-animal_sequence = st.text_area("비교할 동물의 사이토크롬 C의 염기 서열을 작성해주세요:", "MGDVEKGKKIFIMKCSQCHTVEKGGKHKTGPNLHGLFGRKTGQAPGYSYTAANKNKGIIWGEDTLMEYLENPKKYIPGTKMIFVGIKKKEERADLIAYLKKATNE")
+animal_sequence = st.text_area("비교할 동물의 사이토크롬 C의 염기 서열을 작성해주세요:", "MGDVEKGKKIFVQKCAQCHTVEKGGKHKTGPNLHGLFRQKTGQAVGFSYTDANKNKGIIWGEDTLMEYLENPKKYIPGTKMIFAGIKKKAEKADLTAYLKKATND")
 
 # 사람의 사이토크롬 C 서열
 human_sequence = "MGDVEKGKKIFIMKCSQCHTVEKGGKHKTGPNLHGLFGRKTGQAPGYSYTAANKNKGIIWGEDTLMEYLENPKKYIPGTKMIFVGIKKKEERADLIAYLKKATNE"
