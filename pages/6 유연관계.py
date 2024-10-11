@@ -3,6 +3,7 @@ import streamlit as st
 import matplotlib.pyplot as plt
 import matplotlib.font_manager as fm
 import pandas as pd
+import io
 
 # 페이지 설정
 st.set_page_config(page_title="사이토크롬 C 서열 비교: 사람 vs 다른 동물", layout="wide")
@@ -74,6 +75,18 @@ if st.button('업로드'):
         # 내용 정리 표 출력
         st.subheader("내용 정리")
         st.table(df)
+
+        # 엑셀 파일로 데이터 다운로드
+        output = io.BytesIO()
+        with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
+            df.to_excel(writer, index=False, sheet_name='서열 비교 결과')
+            writer.save()
+            processed_data = output.getvalue()
+
+        st.download_button(label='엑셀 파일 다운로드',
+                           data=processed_data,
+                           file_name='cytochrome_c_comparison.xlsx',
+                           mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
 
         # 서열 비교 시각화
         fig, ax = plt.subplots(figsize=(10, 6))
