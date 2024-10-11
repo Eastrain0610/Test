@@ -74,9 +74,9 @@ def compare_sequences(seq1, seq2):
         query_line = aligned_seq1[i:i+line_length]
         sbjct_line = aligned_seq2[i:i+line_length]
         diff_line = ''.join('+' if query != sbjct else ' ' for query, sbjct in zip(query_line, sbjct_line))
-        query_str = f"Query {i+1:<5}{query_line}  {i+line_length}"
-        diff_str = f"       {'':<5}{diff_line}  {i+line_length}"
-        sbjct_str = f"Sbjct {i+1:<5}{sbjct_line}  {i+line_length}"
+        query_str = f"Query {i+1:<5}{query_line}  {i+line_length if i+line_length <= len(aligned_seq1) else len(aligned_seq1)}"
+        diff_str = f"       {'':<5}{diff_line}"
+        sbjct_str = f"Sbjct {i+1:<5}{sbjct_line}  {i+line_length if i+line_length <= len(aligned_seq2) else len(aligned_seq2)}"
         result_str += query_str + "\n" + diff_str + "\n" + sbjct_str + "\n\n"
     
     similarity_percentage = (best_alignment.score / min(len(seq1), len(seq2))) * 100
@@ -100,12 +100,5 @@ if user_animal_protein_seq:
         ax.set_xticklabels(['사람', user_animal_name], fontproperties=fontprop if fontprop else None)
         st.pyplot(fig)
 
-    # 사용자가 서열을 보고 싶을 경우 출력
-    if st.checkbox('사이토크롬 C 단백질 서열 보기'):
-        st.subheader('사람 사이토크롬 C 단백질 서열')
-        st.text(human_protein_seq)
-
-        st.subheader(f'{user_animal_name} ({user_animal_sci_name}) 사이토크롬 C 단백질 서열')
-        st.text(user_animal_protein_seq)
 else:
     st.write("유효한 동물 이름을 입력하고 서열을 확인하세요.")
