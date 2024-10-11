@@ -42,7 +42,6 @@ plt.rcParams['axes.unicode_minus'] = False
 
 # Streamlit 앱 설명
 st.title("사이토크롬 C 서열 비교: 사람 vs 다른 동물")
-
 
 
 # 서열 데이터 (예시)
