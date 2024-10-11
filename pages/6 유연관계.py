@@ -47,40 +47,11 @@ st.write("이 애플리케이션은 사람과 다른 동물의 사이토크롬 C
 # 사람의 사이토크롬 C 서열
 human_sequence = "MGDVEKGKKIFIMKCSQCHTVEKGGKHKTGPNLHGLFGRKTGQAPGYSYTAANKNKGIIWGEDTLMEYLENPKKYIPGTKMIFVGIKKKEERADLIAYLKKATNE"
 
-# 사용자 입력을 통한 학명 입력 및 Gemini API 사용
-import requests
-
+# 사용자 입력을 통한 학명 입력 및 서열 입력
 animal_name = st.text_input("다른 동물의 학명을 입력하세요:", "Animal 1")
-
-# Gemini API를 사용해 학명에 따른 사이토크롬 C 서열 가져오기
-if animal_name:
-    try:
-        response = requests.get(f"https://api.gemini.com/sequence/{animal_name}")
-        if response.status_code == 200:
-            other_animal_sequence = response.json().get('sequence', "데이터를 찾을 수 없습니다.")
-            st.write(f"{animal_name}의 사이토크롬 C 서열:")
-            st.text(other_animal_sequence)
-        else:
-            st.warning("Gemini API에서 데이터를 가져오는 데 실패했습니다. 다른 학명을 입력해보세요.")
-    except Exception as e:
-        st.error(f"API 요청 중 오류가 발생했습니다: {e}")
-
-# 학명에 따른 사이토크롬 C 서열 예시 데이터
-animal_sequences = {
-    "Animal 1": "MGDVEKGKKIFIMKCSQCHTVEKGGKHKTAP",
-    "Animal 2": "MGDVEKGKKIFIMKCSQCHTVEKGGKHKTAA",
-    "Animal 3": "MGDVEKGKKIFIMKCSQCHTVEKGGKHKTGP",
-    "Animal 4": "MGDVEKGKKIFIMKCSQCHTVEKGGKHKTTG"
-}
+other_animal_sequence = st.text_input(f"{animal_name}의 사이토크롬 C 서열을 입력하세요:", "MGDVEKGKKIFIMKCSQCHTVEKGGKHKTAP")
 
 # 입력된 학명에 해당하는 서열을 가져오기
-if animal_name in animal_sequences:
-    other_animal_sequence = animal_sequences[animal_name]
-    st.write(f"{animal_name}의 사이토크롬 C 서열:")
-    st.text(other_animal_sequence)
-else:
-    st.warning("입력한 학명에 해당하는 서열 데이터가 없습니다. 다른 학명을 입력해보세요.")
-
 # 사용자 입력을 통한 다른 동물의 서열 입력 (최대 2가지 서열 입력)
 other_animal_sequences = []
 other_animal_names = []
