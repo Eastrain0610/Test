@@ -67,16 +67,17 @@ def compare_sequences(seq1, seq2):
     # BioPython의 pairwise2를 이용한 정렬 및 비교
     alignments = pairwise2.align.globalxx(seq1, seq2)
     best_alignment = alignments[0]
-    alignment_str = format_alignment(*best_alignment)
-
-    # Query와 Sbjct 서열을 정렬하여 보기 쉽게 표현
     aligned_seq1, aligned_seq2, score, start, end = best_alignment
     result_str = ""
     line_length = 60
     for i in range(0, len(aligned_seq1), line_length):
-        query_line = f"Query {i+1:<5}{aligned_seq1[i:i+line_length]}  {i+line_length}"
-        sbjct_line = f"Sbjct {i+1:<5}{aligned_seq2[i:i+line_length]}  {i+line_length}"
-        result_str += query_line + "\n" + sbjct_line + "\n\n"
+        query_line = aligned_seq1[i:i+line_length]
+        sbjct_line = aligned_seq2[i:i+line_length]
+        diff_line = ''.join('+' if query != sbjct else ' ' for query, sbjct in zip(query_line, sbjct_line))
+        query_str = f"Query {i+1:<5}{query_line}  {i+line_length}"
+        diff_str = f"       {'':<5}{diff_line}  {i+line_length}"
+        sbjct_str = f"Sbjct {i+1:<5}{sbjct_line}  {i+line_length}"
+        result_str += query_str + "\n" + diff_str + "\n" + sbjct_str + "\n\n"
     
     similarity_percentage = (best_alignment.score / min(len(seq1), len(seq2))) * 100
     return similarity_percentage, result_str
