@@ -87,8 +87,7 @@ if st.session_state.analysis_content:
 
         # 그림 생성을 위한 프롬프트 생성
         image_prompt = (
-            f"다음 조건에 맞는 식물을 만화 스타일로 그려주세요. 반드시 plant 형태로 그려주세요:
-"
+            f"다음 조건에 맞는 식물을 만화 스타일로 그려주세요. 반드시 plant 형태로 그려주세요"
             f"- 온도: {temperature}°C\n"
             f"- 수분 공급량: {water_supply} (1: 적음, 10: 많음)\n"
             f"- 햇빛 노출 시간: {sunlight}시간\n"
