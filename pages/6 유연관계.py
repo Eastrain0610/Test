@@ -58,6 +58,13 @@ similarity = calculate_similarity(human_sequence, other_animal_sequence)
 # 결과 출력
 st.write(f"사람과 다른 동물의 사이토크롬 C 서열 일치율: {similarity:.2f}%")
 
+# 서열 데이터 출력
+st.subheader("사람의 사이토크롬 C 서열")
+st.text(human_sequence)
+
+st.subheader("다른 동물의 사이토크롬 C 서열")
+st.text(other_animal_sequence)
+
 # 서열 비교 시각화
 fig, ax = plt.subplots(figsize=(10, 4))
 ax.bar(['사람', '다른 동물'], [len(human_sequence), len(other_animal_sequence)], color=['blue', 'green'])
