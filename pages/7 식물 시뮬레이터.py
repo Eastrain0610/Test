@@ -87,7 +87,7 @@ if st.session_state.analysis_content:
             f"- 햇빛 노출 시간: {sunlight}시간\n"
             f"- CO2 농도: {co2_level} ppm\n"
             f"- 빛의 파장: {light_wavelength}\n\n"
-            "선택한 성장 조건에 맞는 식물의 형태, 잎의 크기, 열매 등을 중심으로 그려주세요. 서식지보다는 식물의 모양과 잎의 특성에 집중하여 식물을 표현해 주세요."
+            "분석한 결과에 나온 사례의 식물을 그림으로 그려줘."
         )
 
         # OpenAI의 이미지 생성 모델 사용
