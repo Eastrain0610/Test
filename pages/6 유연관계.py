@@ -42,7 +42,8 @@ plt.rcParams['axes.unicode_minus'] = False
 
 # Streamlit 앱 설명
 st.title("사이토크롬 C 서열 비교: 사람 vs 다른 동물")
-st.write("이 애플리케이션은 사람과 다른 동물의 사이토크롬 C 서열을 비교합니다. 나눔 고딕 폰트를 사용하여 한글을 지원합니다.")
+
+
 
 # 서열 데이터 (예시)
 human_sequence = "MGDVEKGKKIFIMKCSQCHTVEKGGKHKTGPNLHGLFGRKTGQAPGYSYTAANKNKGIIWGEDTLMEYLENPKKYIPGTKMIFVGIKKKEERADLIAYLKKATNE"
