@@ -67,51 +67,45 @@ def compare_sequences(seq1, seq2):
     # BioPython의 pairwise2를 이용한 정렬 및 비교
     alignments = pairwise2.align.globalxx(seq1, seq2)
     best_alignment = alignments[0]
-    aligned_seq1, aligned_seq2, score, start, end = best_alignment
-    identities = sum(1 for a, b in zip(aligned_seq1, aligned_seq2) if a == b)
-    positives = sum(1 for a, b in zip(aligned_seq1, aligned_seq2) if a == b or (a != '-' and b != '-'))
-    gaps = sum(1 for a, b in zip(aligned_seq1, aligned_seq2) if a == '-' or b == '-')
-    similarity_percentage = (identities / len(aligned_seq1)) * 100
-
-    result_str = ""
-    line_length = 60
-    for i in range(0, len(aligned_seq1), line_length):
-        query_start = i + 1
-        query_end = min(i + line_length, len(aligned_seq1)) if (i + line_length <= len(aligned_seq1)) else len(aligned_seq1)
-        query_line = aligned_seq1[i:i+line_length]
-        sbjct_line = aligned_seq2[i:i+line_length]
-        diff_line = ''.join('+' if query != sbjct else ' ' for query, sbjct in zip(query_line, sbjct_line))
-        query_str = f"Query {query_start:<5} {query_line}  {query_end}"
-        sbjct_str = f"Sbjct {query_start:<5} {sbjct_line}  {query_end if query_end <= len(aligned_seq2) else len(aligned_seq2)}"
-        diff_str = f"       {'':<5} {diff_line}"
-        result_str += query_str + "\n" + diff_str + "\n" + sbjct_str + "\n\n"
-    
-    return similarity_percentage, result_str, identities, positives, gaps
+    alignment_str = format_alignment(*best_alignment)
+    similarity_percentage = (best_alignment.score / len(seq1)) * 100
+    return similarity_percentage, alignment_str
 
 if user_animal_protein_seq:
-    similarity, alignment_result, identities, positives, gaps = compare_sequences(human_protein_seq, user_animal_protein_seq)
+    similarity, alignment_result = compare_sequences(human_protein_seq, user_animal_protein_seq)
 
     if similarity is not None:
         st.write(f"유사도: {similarity:.2f}%")
         st.text(alignment_result)
-        st.write("## 서열 비교 분석 결과:")
-        st.write(f"- Score: {best_alignment[2]}")
-        st.write(f"- Expect: 7e-71 (서열 유사성의 유의미성)")
-        st.write(f"- Identities: {identities}/{len(human_protein_seq)} ({(identities / len(human_protein_seq)) * 100:.2f}%)")
-        st.write(f"- Positives: {positives}/{len(human_protein_seq)} ({(positives / len(human_protein_seq)) * 100:.2f}%)")
-        st.write(f"- Gaps: {gaps}/{len(human_protein_seq)} ({(gaps / len(human_protein_seq)) * 100:.2f}%)")
     else:
         st.write("서열 비교에 실패했습니다. 다시 시도해 주세요.")
 
     # 그래프 시각화
     if similarity is not None:
         fig, ax = plt.subplots()
-        ax.bar(['사람', user_animal_name], [100, similarity], color=['blue', 'green'])
-        ax.set_ylabel('유사도 (%)', fontproperties=fontprop if fontprop else None)
-        ax.set_title('사이토크롬 C 유사도 비교', fontproperties=fontprop if fontprop else None)
-        ax.set_xticks([0, 1])
+        ax.bar(['사람', user_animal_name], [len(human_protein_seq), len(user_animal_protein_seq)], color=['blue', 'green'])
+        ax.set_ylabel('단백질 서열 길이', fontproperties=fontprop if fontprop else None)
+        ax.set_title('사이토크롬 C 단백질 서열 길이 비교', fontproperties=fontprop if fontprop else None)
         ax.set_xticklabels(['사람', user_animal_name], fontproperties=fontprop if fontprop else None)
         st.pyplot(fig)
 
+    # 사용자가 서열을 보고 싶을 경우 출력
+    if st.checkbox('사이토크롬 C 단백질 서열 보기'):
+        st.subheader('사람 사이토크롬 C 단백질 서열')
+        st.text(human_protein_seq)
+
+        st.subheader(f'{user_animal_name} ({user_animal_sci_name}) 사이토크롬 C 단백질 서열')
+        st.text(user_animal_protein_seq)
 else:
     st.write("유효한 동물 이름을 입력하고 서열을 확인하세요.")
+
+# 데이터 커서 창 만들기
+st.write("## 데이터 입력 커서")
+selected_data = st.selectbox('데이터를 선택하세요:', student_df['이름'] if 'student_data' in st.session_state and st.session_state['student_data'] else [])
+
+if selected_data:
+    selected_entry = student_df[student_df['이름'] == selected_data].iloc[0]
+    st.write(f"### 선택한 데이터:")
+    st.write(f"**이름**: {selected_entry['이름']}")
+    st.write(f"**학명**: {selected_entry['학명']}")
+    st.write(f"**서열**: {selected_entry['서열']}")
