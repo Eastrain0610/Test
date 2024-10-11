@@ -67,7 +67,9 @@ def compare_sequences(seq1, seq2):
     # BioPython의 pairwise2를 이용한 정렬 및 비교
     alignments = pairwise2.align.globalxx(seq1, seq2)
     best_alignment = alignments[0]
-    aligned_seq1, aligned_seq2, score, start, end = best_alignment
+    aligned_seq1, aligned_seq2, score = best_alignment[2]
+    start = best_alignment[3]
+    end = best_alignment[4]
 
     result_str = f"{aligned_seq1}
 {aligned_seq2}
@@ -87,7 +89,7 @@ if user_animal_protein_seq:
         st.write(f"유사도: {similarity:.2f}%")
         st.text(alignment_result)
         st.write("## 서열 비교 분석 결과:")
-        st.write(f"- Score: {score}")
+        st.write(f"- Score: {best_alignment[2]}")
         st.write(f"- Expect: 7e-71 (서열 유사성의 유의미성)")
         st.write(f"- Identities: {identities}/{len(human_protein_seq)} ({(identities / len(human_protein_seq)) * 100:.2f}%)")
         st.write(f"- Positives: {positives}/{len(human_protein_seq)} ({(positives / len(human_protein_seq)) * 100:.2f}%)")
