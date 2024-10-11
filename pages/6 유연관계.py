@@ -42,12 +42,31 @@ plt.rcParams['axes.unicode_minus'] = False
 
 # Streamlit 앱 설명
 st.title("사이토크롬 C 서열 비교: 사람 vs 다른 동물")
+st.write("이 애플리케이션은 사람과 다른 동물의 사이토크롬 C 서열을 비교합니다. 나눔 고딕 폰트를 사용하여 한글을 지원합니다.")
 
-
-# 서열 데이터 (예시)
+# 사람의 사이토크롬 C 서열
 human_sequence = "MGDVEKGKKIFIMKCSQCHTVEKGGKHKTGPNLHGLFGRKTGQAPGYSYTAANKNKGIIWGEDTLMEYLENPKKYIPGTKMIFVGIKKKEERADLIAYLKKATNE"
 
-# 사용자 입력을 통한 다른 동물의 서열 입력 (3~4가지 서열 입력)
+# 사용자 입력을 통한 학명 입력
+animal_name = st.text_input("다른 동물의 학명을 입력하세요:", "Animal 1")
+
+# 학명에 따른 사이토크롬 C 서열 예시 데이터
+animal_sequences = {
+    "Animal 1": "MGDVEKGKKIFIMKCSQCHTVEKGGKHKTAP",
+    "Animal 2": "MGDVEKGKKIFIMKCSQCHTVEKGGKHKTAA",
+    "Animal 3": "MGDVEKGKKIFIMKCSQCHTVEKGGKHKTGP",
+    "Animal 4": "MGDVEKGKKIFIMKCSQCHTVEKGGKHKTTG"
+}
+
+# 입력된 학명에 해당하는 서열을 가져오기
+if animal_name in animal_sequences:
+    other_animal_sequence = animal_sequences[animal_name]
+    st.write(f"{animal_name}의 사이토크롬 C 서열:")
+    st.text(other_animal_sequence)
+else:
+    st.warning("입력한 학명에 해당하는 서열 데이터가 없습니다. 다른 학명을 입력해보세요.")
+
+# 사용자 입력을 통한 다른 동물의 서열 입력 (최대 2가지 서열 입력)
 other_animal_sequences = []
 other_animal_names = []
 for i in range(1, 3):
