@@ -1,14 +1,12 @@
-import os
 import streamlit as st
-import matplotlib.pyplot as plt
-import matplotlib.font_manager as fm
 import pandas as pd
+import matplotlib.pyplot as plt
 import io
+import sys
+import os
+import matplotlib.font_manager as fm
 
-# 페이지 설정
-st.set_page_config(page_title="사이토크롬 C 서열 비교: 사람 vs 다른 동물", layout="wide")
-
-# 폰트 파일 경로 설정
+# 폰트 파일 경로 설정: 다양한 경로에서 시도해 보기
 possible_paths = [
     "./fonts/NanumGothic.ttf",
     "../fonts/NanumGothic.ttf",
@@ -23,83 +21,70 @@ for path in possible_paths:
 
 if font_path:
     fontprop = fm.FontProperties(fname=font_path)
+    plt.rcParams['font.family'] = fontprop.get_name()
 else:
     st.warning("NanumGothic.ttf 폰트 파일을 찾을 수 없습니다. 기본 폰트를 사용합니다.")
     fontprop = None
 
-# 나눔 고딕 폰트 설정 (CSS 적용)
-st.markdown("""
-    <style>
-    @import url('https://fonts.googleapis.com/css2?family=Nanum+Gothic&display=swap');
-    html, body, [class*="css"]  {
-        font-family: 'Nanum Gothic', sans-serif;
-    }
-    </style>
-    """, unsafe_allow_html=True)
+# Streamlit 앱 제목 설정
+st.title('사이토크롬 C 서열 비교: 사람 vs 다른 동물')
 
-# 나눔 고딕 폰트를 Matplotlib에 설정
-if fontprop:
-    plt.rc('font', family=fontprop.get_name())
-plt.rcParams['axes.unicode_minus'] = False
+# 학생이 입력한 동물 이름, 학명, 단백질 서열
+user_animal_name = st.text_input('비교할 동물의 이름을 입력하세요 (예: 침팬지):')
+user_animal_sci_name = st.text_input('비교할 동물의 학명을 입력하세요 (예: Pan troglodytes):')
+user_animal_protein_seq = st.text_area('비교할 동물의 사이토크롬 C 단백질 서열을 입력하세요. 예:MGDVEKGKKIFVQKCAQCHTVEKGGKHKTGPNLHGLFRQKTGQAVGFSYTDANKNKGIIWGEDTLMEYLENPKKYIPGTKMIFAGIKKKAEKADLTAYLKKATND')
 
-# 앱 설명
-st.title("사이토크롬 C 서열 비교: 사람 vs 다른 동물")
+# 사람의 사이토크롬 C 단백질 서열
+human_protein_seq = "MGDVEKGKKIFIMKCSQCHTVEKGGKHKTGPNLHGLFGRKTGQAPGYSYTAANKNKGIIWGEDTLMEYLENPKKYIPGTKMIFVGIKKKEERADLIAYLKKATNE"
 
-# 동물 이름 및 학명, 서열 입력
-animal_common_name = st.text_input("비교할 동물의 이름을 작성해 주세요:", "예:침팬지")
-animal_name = st.text_input("비교할 동물의 학명을 입력하세요:", "예:Pan troglodytes")
-animal_sequence = st.text_area("비교할 동물의 사이토크롬 C의 염기 서열을 작성해주세요:", "예:MGDVEKGKKIFVQKCAQCHTVEKGGKHKTGPNLHGLFRQKTGQAVGFSYTDANKNKGIIWGEDTLMEYLENPKKYIPGTKMIFAGIKKKAEKADLTAYLKKATND")
+# 출석한 학생 데이터를 저장할 리스트 초기화
+if 'student_data' not in st.session_state:
+    st.session_state['student_data'] = []
 
-# 업로드 버튼 추가
-if st.button('업로드'):
-    if animal_sequence:
-        # 사람의 사이토크롬 C 서열
-        human_sequence = "MGDVEKGKKIFIMKCSQCHTVEKGGKHKTGPNLHGLFGRKTGQAPGYSYTAANKNKGIIWGEDTLMEYLENPKKYIPGTKMIFVGIKKKEERADLIAYLKKATNE"
+# 학명 데이터 추가
+if user_animal_name and user_animal_sci_name and user_animal_protein_seq and st.button('제출'):
+    st.session_state['student_data'].append({
+        '이름': user_animal_name,
+        '학명': user_animal_sci_name,
+        '서열': user_animal_protein_seq
+    })
+    st.success('학명 데이터가 성공적으로 정리되었습니다!')
 
-        # 서열 일치율 계산 함수
-        def calculate_similarity(seq1, seq2):
-            # 두 서열의 길이가 다를 경우 최소 길이를 기준으로 계산
-            min_length = min(len(seq1), len(seq2))
-            matches = sum(a == b for a, b in zip(seq1[:min_length], seq2[:min_length]))
-            return matches / min_length * 100
+# 저장된 학생 데이터를 데이터프레임으로 변환하여 표시
+if st.session_state['student_data']:
+    student_df = pd.DataFrame(st.session_state['student_data'])
+    st.write("## 학명 데이터:")
+    st.dataframe(student_df)
 
-        # 일치율 계산 및 데이터 정리
-        similarity = calculate_similarity(human_sequence, animal_sequence)
-        data = {
-            '서열 종류': ['사람', animal_common_name],
-            '서열 길이': [len(human_sequence), len(animal_sequence)],
-            '일치율 (%)': [100, similarity]
-        }
-        df = pd.DataFrame(data)
+# 서열 비교 및 결과 출력
+from Bio import pairwise2
+from Bio.pairwise2 import format_alignment
 
-        # 내용 정리 표 출력
-        st.subheader("내용 정리")
-        st.table(df)
+def compare_sequences(seq1, seq2):
+    if not seq1 or not seq2:
+        return None, "서열을 가져오지 못했습니다. 다시 시도해 주세요."
+    
+    # BioPython의 pairwise2를 이용한 정렬 및 비교
+    alignments = pairwise2.align.globalxx(seq1, seq2)
+    best_alignment = alignments[0]
+    alignment_str = format_alignment(*best_alignment)
+    similarity_percentage = (best_alignment.score / len(seq1)) * 100
+    return similarity_percentage, alignment_str
 
-        # 엑셀 파일로 데이터 다운로드
-        output = io.BytesIO()
-        with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
-            df.to_excel(writer, index=False, sheet_name='서열 비교 결과')
-            writer.close()
-            processed_data = output.getvalue()
+if user_animal_protein_seq:
+    similarity, alignment_result = compare_sequences(human_protein_seq, user_animal_protein_seq)
 
-        st.download_button(label='엑셀 파일 다운로드',
-                           data=processed_data,
-                           file_name='cytochrome_c_comparison.xlsx',
-                           mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-
-        # 서열 비교 시각화
-        fig, ax = plt.subplots(figsize=(10, 6))
-        labels = ['사람', animal_common_name]
-        similarity_values = [100, similarity]
-        ax.bar(labels, similarity_values, color=['blue', 'green'])
-        ax.set_ylabel('서열 일치율 (%)', fontproperties=fontprop if fontprop else None)
-        ax.set_title('사이토크롬 C 서열 일치율 비교', fontproperties=fontprop if fontprop else None)
-        ax.tick_params(axis='x', labelsize=10)
-        for label in ax.get_xticklabels():
-            label.set_fontproperties(fontprop if fontprop else None)
-
-        # Streamlit에 그래프 출력
-        st.pyplot(fig)
+    if similarity is not None:
+        st.write(f"유사도: {similarity:.2f}%")
+        st.text(alignment_result)
     else:
-        st.warning("염기 서열을 입력해주세요.")
+        st.write("서열 비교에 실패했습니다. 다시 시도해 주세요.")
+
+    # 그래프 시각화
+    if similarity is not None:
+        fig, ax = plt.subplots()
+        ax.bar(['사람', user_animal_name], [100, similarity], color=['blue', 'green'])
+        ax.set_ylabel('유사도 (%)', fontproperties=fontprop if fontprop else None)
+        ax.set_title('사이토크롬 C 단백질 유사도 비교', fontproperties=fontprop if fontprop else None)
+        ax.set_xticklabels(['사람', user_animal_name], fontproperties=fontprop if fontprop else None)
+        st.pyplot(fig)
