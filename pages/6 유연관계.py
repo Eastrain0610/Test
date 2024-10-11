@@ -47,32 +47,41 @@ st.write("이 애플리케이션은 사람과 다른 동물의 사이토크롬 C
 # 서열 데이터 (예시)
 human_sequence = "MGDVEKGKKIFIMKCSQCHTVEKGGKHKTGP"
 
-# 사용자 입력을 통한 다른 동물의 서열 입력
-other_animal_sequence = st.text_input("다른 동물의 사이토크롬 C 서열을 입력하세요:", "MGDVEKGKKIFIMKCSQCHTVEKGGKHKTAP")
+# 사용자 입력을 통한 다른 동물의 서열 입력 (3~4가지 서열 입력)
+other_animal_sequences = []
+for i in range(1, 5):
+    other_animal_sequence = st.text_input(f"다른 동물 {i}의 사이토크롬 C 서열을 입력하세요:", f"MGDVEKGKKIFIMKCSQCHTVEKGGKHKTAP")
+    other_animal_sequences.append(other_animal_sequence)
 
 # 서열 일치율 계산
 def calculate_similarity(seq1, seq2):
     matches = sum(a == b for a, b in zip(seq1, seq2))
     return matches / len(seq1) * 100
 
-similarity = calculate_similarity(human_sequence, other_animal_sequence)
-
 # 결과 출력
-st.write(f"사람과 다른 동물의 사이토크롬 C 서열 일치율: {similarity:.2f}%")
+st.write("사람과 다른 동물들의 사이토크롬 C 서열 일치율:")
+similarities = []
+for i, other_animal_sequence in enumerate(other_animal_sequences):
+    similarity = calculate_similarity(human_sequence, other_animal_sequence)
+    similarities.append(similarity)
+    st.write(f"사람과 다른 동물 {i+1}의 서열 일치율: {similarity:.2f}%")
 
 # 서열 데이터 출력
 st.subheader("사람의 사이토크롬 C 서열")
 st.text(human_sequence)
 
-st.subheader("다른 동물의 사이토크롬 C 서열")
-st.text(other_animal_sequence)
+for i, other_animal_sequence in enumerate(other_animal_sequences):
+    st.subheader(f"다른 동물 {i+1}의 사이토크롬 C 서열")
+    st.text(other_animal_sequence)
 
 # 서열 비교 시각화
-fig, ax = plt.subplots(figsize=(10, 4))
-ax.bar(['사람', '다른 동물'], [len(human_sequence), len(other_animal_sequence)], color=['blue', 'green'])
-ax.set_ylabel('서열 길이', fontproperties=fontprop if fontprop else None)
-ax.set_title('사이토크롬 C 서열 길이 비교', fontproperties=fontprop if fontprop else None)
-ax.tick_params(axis='x', labelsize=12)
+fig, ax = plt.subplots(figsize=(10, 6))
+labels = [f'사람 vs 다른 동물 {i+1}' for i in range(len(other_animal_sequences))]
+similarity_values = similarities
+ax.bar(labels, similarity_values, color=['blue'] * len(other_animal_sequences))
+ax.set_ylabel('서열 일치율 (%)', fontproperties=fontprop if fontprop else None)
+ax.set_title('사이토크롬 C 서열 일치율 비교', fontproperties=fontprop if fontprop else None)
+ax.tick_params(axis='x', labelsize=10)
 for label in ax.get_xticklabels():
     label.set_fontproperties(fontprop if fontprop else None)
 
