@@ -70,10 +70,11 @@ if search_term:
     except Exception as e:
         st.error(f"API 요청 중 오류가 발생했습니다: {e}")
 else:
+    st.warning("검색 결과가 없으므로 직접 학명을 입력하세요.")
     animal_name = st.text_input("비교할 동물의 학명을 입력하세요:", "Pan troglodytes")
 
 # Gemini API를 사용해 학명에 따른 생물 정보 가져오기
-if animal_name:
+if 'animal_name' in locals() and animal_name:
     try:
         response = requests.get(f"https://api.gemini.com/organism/{animal_name}", headers={"Authorization": f"Bearer {api_key}"})
         st.write(f"API 응답 상태 코드: {response.status_code}")  # 상태 코드 출력
