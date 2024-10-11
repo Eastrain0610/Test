@@ -8,6 +8,12 @@ st.title("사람 사이토크롬 C 유사도 비교")
 st.header("사이토크롬 C 염기서열 입력")
 sequences_input = st.text_area("각 염기서열을 FASTA 형식으로 입력하세요. 여러 서열을 비교하려면 각각을 '>'로 시작하여 구분하세요.", height=200)
 
+# 기본 사람 사이토크롬 C 서열 추가
+default_human_cytochrome_c = (">Human Cytochrome C\n"
+                              "MGDVEKGKKIFIMKCSQCHTVEKGGKHKTGPNLHGLFGRKTGQAPGYSYTAANKNKGIIWGEDTLMEYLE\n"
+                              "NPKKYIPGTKMIFVGIKKKEERADLIAYLKKATNE")
+sequences_input = default_human_cytochrome_c + "\n" + sequences_input
+
 if sequences_input:
     sequences = []
     current_sequence = ""
