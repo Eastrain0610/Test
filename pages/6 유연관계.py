@@ -24,12 +24,15 @@ else:
 
 # Streamlit 웹 페이지 설정
 
-# Gemini API 키 입력
+# Gemini API 키 입력 및 설정
+import requests
+
 api_key = st.text_input("Gemini API 키를 입력하세요:", type="password")
 if not api_key:
     st.error("이 애플리케이션을 사용하려면 유효한 Gemini API 키가 필요합니다.")
     st.stop()
 st.set_page_config(page_title="사이토크롬 C 서열 비교: 사람 vs 다른 동물", layout="wide")
+
 
 
 # 나눔 고딕 폰트 설정 (CSS를 이용해 전체 텍스트 적용)
