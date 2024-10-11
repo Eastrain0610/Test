@@ -48,15 +48,17 @@ st.title("사이토크롬 C 서열 비교: 사람 vs 다른 동물")
 # 동물 이름 및 학명, 서열 입력
 animal_common_name = st.text_input("비교할 동물의 이름을 작성해 주세요:", "침팬지")
 animal_name = st.text_input("비교할 동물의 학명을 입력하세요:", "Pan troglodytes")
-animal_sequence = st.text_area("비교할 동물의 사이토크롬 C의 염기 서열을 작성해주세요:", "MGDVEKGKKIFIMKCSQCHTVEKGGKHKTAP")
+animal_sequence = st.text_area("비교할 동물의 사이토크롬 C의 염기 서열을 작성해주세요:", "MGDVEKGKKIFIMKCSQCHTVEKGGKHKTGPNLHGLFGRKTGQAPGYSYTAANKNKGIIWGEDTLMEYLENPKKYIPGTKMIFVGIKKKEERADLIAYLKKATNE")
 
 # 사람의 사이토크롬 C 서열
 human_sequence = "MGDVEKGKKIFIMKCSQCHTVEKGGKHKTGPNLHGLFGRKTGQAPGYSYTAANKNKGIIWGEDTLMEYLENPKKYIPGTKMIFVGIKKKEERADLIAYLKKATNE"
 
 # 서열 일치율 계산 함수
 def calculate_similarity(seq1, seq2):
-    matches = sum(a == b for a, b in zip(seq1, seq2))
-    return matches / len(seq1) * 100
+    # 두 서열의 길이가 다를 경우 최소 길이를 기준으로 계산
+    min_length = min(len(seq1), len(seq2))
+    matches = sum(a == b for a, b in zip(seq1[:min_length], seq2[:min_length]))
+    return matches / min_length * 100
 
 # 사람의 서열 출력
 st.subheader("사람의 사이토크롬 C 서열")
