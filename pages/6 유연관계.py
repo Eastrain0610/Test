@@ -65,7 +65,7 @@ def align_sequences(query, subject):
         if q == s:
             alignment.append(q)  # 일치하는 염기 서열 그대로 표시
         else:
-            alignment.append(' ')  # 불일치하는 부분은 공백으로 표시
+            alignment.append('+')  # 불일치하는 부분은 '+'로 표시
     return ''.join(alignment)
 
 # 들여쓰기와 간격을 맞추기 위해 각 서열의 출력 부분을 일정하게 정렬합니다.
@@ -79,11 +79,11 @@ subject_aligned = st.text_area("비교할 동물의 서열 (Sbjct)", animal_sequ
 alignment = align_sequences(query_aligned, subject_aligned)
 
 st.text(format_alignment_line("Query", 1, query_aligned))
-st.text(f"            {alignment[:60]}")
+st.text(f"             {alignment[:60]}")
 st.text(format_alignment_line("Sbjct", 1, subject_aligned))
 
 st.text(format_alignment_line("Query", 61, query_aligned[60:]))
-st.text(f"            {alignment[60:]}")
+st.text(f"             {alignment[60:]}")
 st.text(format_alignment_line("Sbjct", 61, subject_aligned[60:]))
 
 # 서열 정렬 결과 수정 가능하게 텍스트 창 추가
