@@ -34,8 +34,7 @@ if 'analysis_content' not in st.session_state:
 analyze_button = st.button("성장 조건에 따른 식물 분석")
 
 if analyze_button:
-    st.subheader("내용 분석")
-
+ 
     # 분석 요청에 사용할 내용 생성
     analysis_prompt = (
         f"현재 식물 성장 조건은 다음과 같습니다:\n"
@@ -95,7 +94,7 @@ if st.session_state.analysis_content:
             f"- CO2 농도: {co2_level} ppm\n"
             f"- 빛의 파장: {light_wavelength}\n"
             f"- 추천된 식물: {plant_names}\n\n"
-            "분석 결과의 사례를 보고 그 식물의 이미지를 불러와줘."
+            "분석 결과의 사례를 Google에서 검색해줘 그림으로 표현해줘."
         )
 
         # OpenAI의 이미지 생성 모델 사용
