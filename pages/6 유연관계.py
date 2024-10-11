@@ -25,11 +25,9 @@ else:
     fontprop = None
 
 # 사람의 사이토크롬 C 서열을 고정하고, 다른 동물의 서열을 입력하여 비교하는 코드입니다.
-st.write("사람의 사이토크롬 C 서열:")
-st.write(human_cytochrome_c)
 
 # 서열 정의
-human_cytochrome_c = "MGDVEKGKKIFIMKCSQCHTVEKGGKHKTGPNLHGLFGRKTGQAPGYSYTAANKNKGIIWGEDTLMEYLENPKKYIPGTKMIFVGIKKKEERADLIAYLKKATNE"
+human_cytochrome_c = "MGDVEKGKKIFVQKCAQCHTVEKGGKHKTGPNLHGLFGRKTGQAPGYSYTAANKNKGIIWGEDTLMEYLENPKKYIPGTKMIFAGIKKKTEREDLIAYLKKADEYITNA"
 rhesus_cytochrome_c = "MGDVEKGKKIFVQKCAQCHTVEKGGKHKTGPNLHGLFGRKTGQAPGYSYTAANKNKGIIWGEDTLMEYLENPKKYIPGTKMIFAGIKKKTEREDLIAYLKKADEYIQNA"
 chicken_cytochrome_c = "MGDVEKGKKIFVQKCAQCHTVEKGGPHKTGPNLHGLFGRKTGQAPGYSYTAANKNKGIIWGEDTLMEYLEDPKDYIPGTKMVFAAMKKKTEREDLIAYLKDATSE"
 
@@ -82,8 +80,7 @@ def main():
             st.warning("동물의 이름을 입력하세요.")
             st.stop()
     
-    st.write("사람의 사이토크롬 C 서열을 기준으로 비교를 시작합니다.")
-seq1 = human_cytochrome_c
+    seq1 = human_cytochrome_c
     label1 = '사람'
     
     # 서열 비교 수행
