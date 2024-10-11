@@ -1,8 +1,31 @@
 import streamlit as st
-from Bio import Entrez, SeqIO
+import pandas as pd
 import matplotlib.pyplot as plt
-from io import StringIO
-import requests
+import io
+import sys
+import os
+import matplotlib.font_manager as fm
+from Bio import Entrez, SeqIO
+
+# 폰트 파일 경로 설정: 다양한 경로에서 시도해 보기
+possible_paths = [
+    "./fonts/NanumGothic.ttf",
+    "../fonts/NanumGothic.ttf",
+    "/workspaces/test/fonts/NanumGothic.ttf"
+]
+
+font_path = None
+for path in possible_paths:
+    if os.path.exists(path):
+        font_path = path
+        break
+
+if font_path:
+    fontprop = fm.FontProperties(fname=font_path)
+    plt.rcParams['font.family'] = fontprop.get_name()
+else:
+    st.warning("NanumGothic.ttf 폰트 파일을 찾을 수 없습니다. 기본 폰트를 사용합니다.")
+    fontprop = None
 
 # Streamlit 앱 제목 설정
 st.title('사이토크롬 C 서열 비교: 사람 vs 다른 동물')
@@ -55,8 +78,8 @@ else:
 if similarity is not None:
     fig, ax = plt.subplots()
     ax.bar(['사람', selected_animal], [len(human_seq), len(animal_seq)], color=['blue', 'green'])
-    ax.set_ylabel('서열 길이')
-    ax.set_title('사이토크롬 C 서열 길이 비교')
+    ax.set_ylabel('서열 길이', fontproperties=fontprop if fontprop else None)
+    ax.set_title('사이토크롬 C 서열 길이 비교', fontproperties=fontprop if fontprop else None)
     st.pyplot(fig)
 
 # 사용자가 서열을 보고 싶을 경우 출력
