@@ -73,9 +73,9 @@ def format_alignment_line(label, index, sequence, length=60):
     return f"{label:<6}{index:<4} {sequence[:length]:<{length}} {index + length - 1}"
 
 # 서열 정렬 및 출력
-st.subheader("서열 정렬 결과 (수정 가능)")
-query_aligned = st.text_area("사람의 서열 (Query)", human_sequence)
-subject_aligned = st.text_area("비교할 동물의 서열 (Sbjct)", animal_sequence)
+st.subheader("서열 정렬 결과")
+query_aligned = human_sequence
+subject_aligned = animal_sequence
 alignment = align_sequences(query_aligned, subject_aligned)
 
 st.text(format_alignment_line("Query", 1, query_aligned))
@@ -86,8 +86,6 @@ st.text(format_alignment_line("Query", 61, query_aligned[60:]))
 st.text(f"             {alignment[60:]}")
 st.text(format_alignment_line("Sbjct", 61, subject_aligned[60:]))
 
-# 서열 정렬 결과 수정 가능하게 텍스트 창 추가
-alignment_correction = st.text_area("서열 정렬 결과에 대한 수정 의견을 입력하세요:", "예: 차이점이 명확하지 않습니다. 서열 간의 공백을 추가해 주세요.")
 
 # 사람의 서열 출력
 st.subheader("사람의 사이토크롬 C 서열")
