@@ -73,11 +73,9 @@ def compare_sequences(seq1, seq2):
     for i in range(0, len(aligned_seq1), line_length):
         query_line = aligned_seq1[i:i+line_length]
         sbjct_line = aligned_seq2[i:i+line_length]
-        diff_line = ''.join('+' if query != sbjct else ' ' for query, sbjct in zip(query_line, sbjct_line))
-        query_str = f"Query {i+1:<5}{query_line}  {i+line_length if i+line_length <= len(aligned_seq1) else len(aligned_seq1)}"
-        diff_str = f"       {'':<5}{diff_line}"
-        sbjct_str = f"Sbjct {i+1:<5}{sbjct_line}  {i+line_length if i+line_length <= len(aligned_seq2) else len(aligned_seq2)}"
-        result_str += query_str + "\n" + diff_str + "\n" + sbjct_str + "\n\n"
+        query_str = f"Query {i+1:<5} {query_line}  {i+line_length if i+line_length <= len(aligned_seq1) else len(aligned_seq1)}"
+        sbjct_str = f"Sbjct {i+1:<5} {sbjct_line}  {i+line_length if i+line_length <= len(aligned_seq2) else len(aligned_seq2)}"
+        result_str += query_str + "\n" + sbjct_str + "\n\n"
     
     similarity_percentage = (best_alignment.score / min(len(seq1), len(seq2))) * 100
     return similarity_percentage, result_str
@@ -97,6 +95,7 @@ if user_animal_protein_seq:
         ax.bar(['사람', user_animal_name], [len(human_protein_seq), len(user_animal_protein_seq)], color=['blue', 'green'])
         ax.set_ylabel('단백질 서열 길이', fontproperties=fontprop if fontprop else None)
         ax.set_title('사이토크롬 C 단백질 서열 길이 비교', fontproperties=fontprop if fontprop else None)
+        ax.set_xticks([0, 1])
         ax.set_xticklabels(['사람', user_animal_name], fontproperties=fontprop if fontprop else None)
         st.pyplot(fig)
 
