@@ -5,9 +5,7 @@ import io
 import sys
 import os
 import matplotlib.font_manager as fm
-from Bio import Entrez, SeqIO, Seq
-from Bio.Seq import Seq
-from Bio.SeqUtils import seq3
+from Bio import Seq
 
 # 폰트 파일 경로 설정: 다양한 경로에서 시도해 보기
 possible_paths = [
@@ -46,37 +44,16 @@ selected_animal = animal_options[selected_animal_kor]
 # 학명 출력
 st.write(f"선택한 동물의 학명: *{selected_animal}*")
 
-# NCBI에서 사이토크롬 C 서열 가져오기 함수
-Entrez.email = "dws0610@naver.com"  # 여기에 자신의 이메일 주소를 입력하세요.
-
-def fetch_cytochrome_c_sequence(organism_name):
-    search_term = f"{organism_name}[Organism] AND cytochrome c"
-    handle = Entrez.esearch(db="nucleotide", term=search_term, retmax=1)
-    record = Entrez.read(handle)
-    handle.close()
-    if record["IdList"]:
-        seq_id = record["IdList"][0]
-        handle = Entrez.efetch(db="nucleotide", id=seq_id, rettype="gb", retmode="text")
-        seq_record = SeqIO.read(handle, "genbank")
-        handle.close()
-        return seq_record.seq
-    return None
-
-# 사람과 사용자가 선택한 동물의 사이토크롬 C 서열 가져오기
-st.write("사이토크롬 C 서열을 가져오는 중입니다...")
-
-human_seq = fetch_cytochrome_c_sequence("Homo sapiens")
-animal_seq = fetch_cytochrome_c_sequence(selected_animal)
-
-# DNA 서열을 단백질 서열로 번역
-def translate_to_protein(nucleotide_seq):
-    if nucleotide_seq:
-        return nucleotide_seq.translate(to_stop=True)
-    return None
-
-# 사람과 동물의 단백질 서열 가져오기
-human_protein_seq = translate_to_protein(human_seq)
-animal_protein_seq = translate_to_protein(animal_seq)
+# 사람과 선택한 동물의 사이토크롬 C 단백질 서열 하드코딩
+human_protein_seq = "MGDVEKGKKIFIMKCSQCHTVEKGGKHKTGPNLHGLFGRKTGQAPGYSYTAANKNKGIIWGEDTLMEYLENPKKYIPGTKMIFVGIKKKEERADLIAYLKKATNE"
+animal_protein_sequences = {
+    '침팬지': "MGDVEKGKKIFVQKCAQCHTVEKGGKHKTGPNLHGLFRQKTGQAVGFSYTDANKNKGIIWGEDTLMEYLENPKKYIPGTKMIFAGIKKKAEKADLTAYLKKATNDKTNVS",
+    '고릴라': "MGDVEKGKKIFVQKCAQCHTVEKGGKHKTGPNLHGLFRQKTGQAVGFSYTDANKNKGIIWGEDTLMEYLEKPKKYIPGTKMIFAGIKKKAEKADLTAYLKKATNE",
+    '쥐': "MGDVEKGKKIFIMKCSQCHTVEKGGKHKTGPNLHGLFGRKTGQAPGYSYTAANKNKGIIWGEDTLMEYLENPKKYIPGTKMIFVGIKKKEEKADLIAYLKKATNE",
+    '소': "MGDVEKGKKIFVQKCSQCHTVEKGGKHKTGPNLHGLFGRKTGQAPGYSYTAANKNKGIIWGEDTLMEYLENPKKYIPGTKMIFAGIKKKETKADLTAYLKKATNE",
+    '돼지': "MGDVEKGKKIFIMKCAQCHTVEKGGKHKTGPNLHGLFGRKTGQAPGYSYTAANKNKGIIWGEDTLMEYLEKPKKYIPGTKMIFVGIKKKETKADLTAYLKKATNE"
+}
+animal_protein_seq = animal_protein_sequences.get(selected_animal_kor, None)
 
 # 서열 비교 및 결과 출력
 def compare_sequences(seq1, seq2):
@@ -108,7 +85,7 @@ if similarity is not None:
 # 사용자가 서열을 보고 싶을 경우 출력
 if st.checkbox('사이토크롬 C 단백질 서열 보기'):
     st.subheader('사람 사이토크롬 C 단백질 서열')
-    st.text(str(human_protein_seq))
+    st.text(human_protein_seq)
 
     st.subheader(f'{selected_animal_kor} 사이토크롬 C 단백질 서열')
-    st.text(str(animal_protein_seq))
+    st.text(animal_protein_seq)
