@@ -29,8 +29,9 @@ else:
 # Streamlit 앱 제목 설정
 st.title('사이토크롬 C 서열 비교: 사람 vs 다른 동물')
 
-# 학생이 입력한 동물 이름과 단백질 서열
+# 학생이 입력한 동물 이름, 학명, 단백질 서열
 user_animal_name = st.text_input('비교할 동물의 이름을 입력하세요 (예: 침팬지):')
+user_animal_sci_name = st.text_input('비교할 동물의 학명을 입력하세요 (예: Pan troglodytes):')
 user_animal_protein_seq = st.text_area('비교할 동물의 사이토크롬 C 단백질 서열을 입력하세요:')
 
 # 사람의 사이토크롬 C 단백질 서열
@@ -69,7 +70,7 @@ if user_animal_protein_seq:
         st.subheader('사람 사이토크롬 C 단백질 서열')
         st.text(human_protein_seq)
 
-        st.subheader(f'{user_animal_name} 사이토크롬 C 단백질 서열')
+        st.subheader(f'{user_animal_name} ({user_animal_sci_name}) 사이토크롬 C 단백질 서열')
         st.text(user_animal_protein_seq)
 else:
     st.write("유효한 동물 이름을 입력하고 서열을 확인하세요.")
