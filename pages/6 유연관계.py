@@ -73,9 +73,9 @@ def format_alignment_line(label, index, sequence, length=60):
     return f"{label:<6}{index:<4} {sequence[:length]:<{length}} {index + length - 1}"
 
 # 서열 정렬 및 출력
-st.subheader("서열 정렬 결과")
-query_aligned = human_sequence
-subject_aligned = animal_sequence[:len(human_sequence)]
+st.subheader("서열 정렬 결과 (수정 가능)")
+query_aligned = st.text_area("사람의 서열 (Query)", human_sequence)
+subject_aligned = st.text_area("비교할 동물의 서열 (Sbjct)", animal_sequence)
 alignment = align_sequences(query_aligned, subject_aligned)
 
 st.text(format_alignment_line("Query", 1, query_aligned))
