@@ -2,6 +2,27 @@ import streamlit as st
 import matplotlib.pyplot as plt
 import numpy as np
 import requests
+import os
+import matplotlib.font_manager as fm
+
+# 폰트 파일 경로 설정: 다양한 경로에서 시도해 보기
+possible_paths = [
+    "./fonts/NanumGothic.ttf",
+    "../fonts/NanumGothic.ttf",
+    "/workspaces/test/fonts/NanumGothic.ttf"
+]
+
+font_path = None
+for path in possible_paths:
+    if os.path.exists(path):
+        font_path = path
+        break
+
+if font_path:
+    fontprop = fm.FontProperties(fname=font_path)
+else:
+    st.warning("NanumGothic.ttf 폰트 파일을 찾을 수 없습니다. 기본 폰트를 사용합니다.")
+    fontprop = None
 
 # 사람의 사이토크롬 C 서열을 고정하고, 다른 동물의 서열을 입력하여 비교하는 코드입니다.
 
@@ -25,7 +46,7 @@ def calculate_similarity(seq1, seq2):
 
 # 외부 데이터베이스에서 서열 가져오기 함수 (Gemini API 사용)
 def fetch_sequence(animal_name):
-    # Gemini API를 사용하여 서열을 가져오는 코드입니다.
+    # 실제 API URL로 변경 필요
     url = f"https://gemini.example.com/api/v1/sequences?organism={animal_name}"
     response = requests.get(url)
     if response.status_code == 200:
@@ -56,6 +77,7 @@ def main():
             seq2 = fetch_sequence(animal_name)
             label2 = animal_name
         else:
+            st.warning("동물의 이름을 입력하세요.")
             st.stop()
     
     seq1 = human_cytochrome_c
@@ -63,6 +85,10 @@ def main():
     
     # 서열 비교 수행
     if seq2:
+        if len(seq1) != len(seq2):
+            st.error("두 서열의 길이가 다릅니다. 비교가 불가능합니다.")
+            return
+        
         differences = compare_sequences(seq1, seq2)
         similarity = calculate_similarity(seq1, seq2)
         
@@ -81,11 +107,11 @@ def main():
         x = np.arange(1, sequence_length + 1)
         y = [1 if i in diff_indices else 0 for i in range(sequence_length)]
         
-        fig, ax = plt.subplots(figsize=(10, 2))
+        fig, ax = plt.subplots(figsize=(12, 3))
         ax.bar(x, y, color='b')
-        ax.set_xlabel('Position in Sequence')
-        ax.set_ylabel('Difference (1 = Different, 0 = Same)')
-        ax.set_title(f'Comparison of {label1} and {label2} Cytochrome C Sequences')
+        ax.set_xlabel('Position in Sequence', fontproperties=fontprop if fontprop else None)
+        ax.set_ylabel('Difference (1 = Different, 0 = Same)', fontproperties=fontprop if fontprop else None)
+        ax.set_title(f'Comparison of {label1} and {label2} Cytochrome C Sequences', fontproperties=fontprop if fontprop else None)
         
         # Streamlit을 통해 그래프 표시
         st.pyplot(fig)
