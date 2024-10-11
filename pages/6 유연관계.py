@@ -77,14 +77,12 @@ subject_aligned = animal_sequence[:len(human_sequence)]
 alignment = align_sequences(query_aligned, subject_aligned)
 
 st.text(f"Query  1    {query_aligned[:60]}  60")
-st.text(f"            {alignment[:60]}")
-    st.text(f"Sbjct  1    {subject_aligned[:60]}  60")
+st.text(f"            {alignment[:60]}")st.text(f"Sbjct  1    {subject_aligned[:60]}  60")
 st.text(f"            {alignment[:60]}")
 st.text(f"Sbjct  1    {subject_aligned[:60]}  60")
 
 st.text(f"Query  61   {query_aligned[60:]}  105")
-st.text(f"            {alignment[60:]}")
-    st.text(f"Sbjct  61   {subject_aligned[60:]}  105")
+st.text(f"            {alignment[60:]}")st.text(f"Sbjct  61   {subject_aligned[60:]}  105")
 st.text(f"            {alignment[60:]}")
 st.text(f"Sbjct  61   {subject_aligned[60:]}  105")
 
