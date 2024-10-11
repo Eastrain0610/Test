@@ -2,11 +2,9 @@ import os
 import streamlit as st
 import matplotlib.pyplot as plt
 import matplotlib.font_manager as fm
-import requests
 
 # 페이지 설정
 st.set_page_config(page_title="사이토크롬 C 서열 비교: 사람 vs 다른 동물", layout="wide")
-
 
 # 폰트 파일 경로 설정
 possible_paths = [
@@ -46,9 +44,9 @@ plt.rcParams['axes.unicode_minus'] = False
 st.title("사이토크롬 C 서열 비교: 사람 vs 다른 동물")
 
 # 동물 이름 및 학명, 서열 입력
-animal_common_name = st.text_input("비교할 동물의 이름을 작성해 주세요:", "침팬지")
-animal_name = st.text_input("비교할 동물의 학명을 입력하세요:", "Pan troglodytes")
-animal_sequence = st.text_area("비교할 동물의 사이토크롬 C의 염기 서열을 작성해주세요:", "MGDVEKGKKIFVQKCAQCHTVEKGGKHKTGPNLHGLFRQKTGQAVGFSYTDANKNKGIIWGEDTLMEYLENPKKYIPGTKMIFAGIKKKAEKADLTAYLKKATND")
+animal_common_name = st.text_input("비교할 동물의 이름을 작성해 주세요:", "예:침팬지")
+animal_name = st.text_input("비교할 동물의 학명을 입력하세요:", "예:Pan troglodytes")
+animal_sequence = st.text_area("비교할 동물의 사이토크롬 C의 염기 서열을 작성해주세요:", "예:MGDVEKGKKIFVQKCAQCHTVEKGGKHKTGPNLHGLFRQKTGQAVGFSYTDANKNKGIIWGEDTLMEYLENPKKYIPGTKMIFAGIKKKAEKADLTAYLKKATND")
 
 # 사람의 사이토크롬 C 서열
 human_sequence = "MGDVEKGKKIFIMKCSQCHTVEKGGKHKTGPNLHGLFGRKTGQAPGYSYTAANKNKGIIWGEDTLMEYLENPKKYIPGTKMIFVGIKKKEERADLIAYLKKATNE"
@@ -77,19 +75,16 @@ subject_aligned = animal_sequence[:len(human_sequence)]
 alignment = align_sequences(query_aligned, subject_aligned)
 
 st.text(f"Query  1    {query_aligned[:60]}  60")
-st.text(f"            {alignment[:60]}")st.text(f"Sbjct  1    {subject_aligned[:60]}  60")
 st.text(f"            {alignment[:60]}")
 st.text(f"Sbjct  1    {subject_aligned[:60]}  60")
 
 st.text(f"Query  61   {query_aligned[60:]}  105")
-st.text(f"            {alignment[60:]}")st.text(f"Sbjct  61   {subject_aligned[60:]}  105")
 st.text(f"            {alignment[60:]}")
 st.text(f"Sbjct  61   {subject_aligned[60:]}  105")
 
 # 사람의 서열 출력
 st.subheader("사람의 사이토크롬 C 서열")
 st.text(human_sequence[:80] + '\n' + human_sequence[80:])
-
 
 # 일치율 계산 및 출력
 similarity = calculate_similarity(human_sequence, animal_sequence)
