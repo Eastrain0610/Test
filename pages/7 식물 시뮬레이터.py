@@ -47,7 +47,7 @@ if analyze_button:
         "각각의 조건이 식물 성장에 미치는 영향을 한국어로 번역하고 개조식으로 정리해서 설명해줘. "
         "온도가 너무 낮으면 잎사귀, 열매, 식물의 크기 등등을 고려해줘. "
         "예를 들면, 너무 높은 온도와 수분이 없는 조건에서는 잎사귀의 형태가 뾰족하게 자란다와 같은 식의 표현이면 좋겠어. "
-        "물론 내가 쓴 예시보다 더 구체적으로 분석해서 작성해줘."
+        "반드시 성장 조건에 맞는 식물의 사례를 3가지 이상 들어서 설명해줘."
     )
 
     # OpenAI GPT-3.5-turbo 사용하여 분석 요청
@@ -87,14 +87,14 @@ if st.session_state.analysis_content:
 
         # 그림 생성을 위한 프롬프트 생성
         image_prompt = (
-            f"다음 조건에 맞는 식물을 그려주세요:\n"
+            f"다음 조건에 맞는 식물을 만화 스타일로 그려주세요:\n"
             f"- 온도: {temperature}°C\n"
             f"- 수분 공급량: {water_supply} (1: 적음, 10: 많음)\n"
             f"- 햇빛 노출 시간: {sunlight}시간\n"
             f"- CO2 농도: {co2_level} ppm\n"
             f"- 빛의 파장: {light_wavelength}\n"
             f"- 추천된 식물: {plant_names}\n\n"
-            "선택한 성장 조건에 맞는 식물의 형태, 잎의 크기, 열매 등을 중심으로 그려주세요. 서식지보다는 식물의 모양과 잎의 특성에 집중하여 식물을 표현해 주세요."
+            "선택한 성장 조건에 맞는 식물의 형태, 잎의 크기, 열매 등을 중심으로 만화 스타일로 그려주세요. 서식지보다는 식물의 모양과 잎의 특성에 집중하여 식물을 표현해 주세요."
         )
 
         # OpenAI의 이미지 생성 모델 사용
@@ -105,6 +105,6 @@ if st.session_state.analysis_content:
                 size="1024x1024"
             )
             image_url = image_response['data'][0]['url']
-            st.image(image_url, caption="성장 조건에 따른 식물 이미지")
+            st.image(image_url, caption="성장 조건에 따른 식물 이미지 (만화 스타일)")
         except Exception as e:
             st.write(f"이미지 생성 중 오류가 발생했습니다: {e}")
