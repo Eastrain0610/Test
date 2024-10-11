@@ -65,7 +65,7 @@ def align_sequences(query, subject):
         if q == s:
             alignment.append(q)
         else:
-            alignment.append('+')
+            alignment.append(' ')  # 빈칸으로 표현해 차이점 구분
     return ''.join(alignment)
 
 # 서열 정렬 및 출력
