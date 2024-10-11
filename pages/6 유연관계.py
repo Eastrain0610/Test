@@ -63,7 +63,7 @@ def align_sequences(query, subject):
     alignment = []
     for i, (q, s) in enumerate(zip(query, subject)):
         if q == s:
-            alignment.append('|')  # 일치하는 염기 서열을 '|'로 표시
+            alignment.append(q)  # 일치하는 염기 서열 그대로 표시
         else:
             alignment.append(' ')  # 불일치하는 부분은 공백으로 표시
     return ''.join(alignment)
