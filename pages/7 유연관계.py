@@ -30,30 +30,20 @@ else:
 # Streamlit 앱 제목 설정
 st.title('사이토크롬 C 서열 비교: 사람 vs 다른 동물')
 
-# 사용자가 선택할 수 있는 동물 옵션
-animal_options = {
-    '침팬지': 'Pan troglodytes',
-    '고릴라': 'Gorilla gorilla',
-    '쥐': 'Mus musculus',
-    '소': 'Bos taurus',
-    '돼지': 'Sus scrofa'
-}
-selected_animal_kor = st.selectbox('비교할 동물을 선택하세요:', list(animal_options.keys()))
-selected_animal = animal_options[selected_animal_kor]
+# 학생이 입력한 동물 이름과 학명
+user_animal_name = st.text_input('비교할 동물의 이름을 입력하세요 (예: 침팬지):')
+user_animal_sci_name = st.text_input('비교할 동물의 학명을 입력하세요 (예: Pan troglodytes):')
 
-# 학명 출력
-st.write(f"선택한 동물의 학명: *{selected_animal}*")
-
-# 사람과 선택한 동물의 사이토크롬 C 단백질 서열 하드코딩
+# 사람과 입력한 동물의 사이토크롬 C 단백질 서열 하드코딩
 human_protein_seq = "MGDVEKGKKIFIMKCSQCHTVEKGGKHKTGPNLHGLFGRKTGQAPGYSYTAANKNKGIIWGEDTLMEYLENPKKYIPGTKMIFVGIKKKEERADLIAYLKKATNE"
-animal_protein_sequences = {
+user_animal_protein_sequences = {
     '침팬지': "MGDVEKGKKIFVQKCAQCHTVEKGGKHKTGPNLHGLFRQKTGQAVGFSYTDANKNKGIIWGEDTLMEYLENPKKYIPGTKMIFAGIKKKAEKADLTAYLKKATNDKTNVS",
     '고릴라': "MGDVEKGKKIFVQKCAQCHTVEKGGKHKTGPNLHGLFRQKTGQAVGFSYTDANKNKGIIWGEDTLMEYLEKPKKYIPGTKMIFAGIKKKAEKADLTAYLKKATNE",
     '쥐': "MGDVEKGKKIFIMKCSQCHTVEKGGKHKTGPNLHGLFGRKTGQAPGYSYTAANKNKGIIWGEDTLMEYLENPKKYIPGTKMIFVGIKKKEEKADLIAYLKKATNE",
     '소': "MGDVEKGKKIFVQKCSQCHTVEKGGKHKTGPNLHGLFGRKTGQAPGYSYTAANKNKGIIWGEDTLMEYLENPKKYIPGTKMIFAGIKKKETKADLTAYLKKATNE",
     '돼지': "MGDVEKGKKIFIMKCAQCHTVEKGGKHKTGPNLHGLFGRKTGQAPGYSYTAANKNKGIIWGEDTLMEYLEKPKKYIPGTKMIFVGIKKKETKADLTAYLKKATNE"
 }
-animal_protein_seq = animal_protein_sequences.get(selected_animal_kor, None)
+user_animal_protein_seq = user_animal_protein_sequences.get(user_animal_name, None)
 
 # 서열 비교 및 결과 출력
 def compare_sequences(seq1, seq2):
@@ -66,26 +56,29 @@ def compare_sequences(seq1, seq2):
     similarity_percentage = (matches / min_len) * 100
     return similarity_percentage, f"유사도: {similarity_percentage:.2f}%"
 
-similarity, message = compare_sequences(human_protein_seq, animal_protein_seq)
+if user_animal_protein_seq:
+    similarity, message = compare_sequences(human_protein_seq, user_animal_protein_seq)
 
-if similarity is not None:
-    st.write(message)
+    if similarity is not None:
+        st.write(message)
+    else:
+        st.write("서열 비교에 실패했습니다. 다시 시도해 주세요.")
+
+    # 그래프 시각화
+    if similarity is not None:
+        fig, ax = plt.subplots()
+        ax.bar(['사람', user_animal_name], [len(human_protein_seq), len(user_animal_protein_seq)], color=['blue', 'green'])
+        ax.set_ylabel('단백질 서열 길이', fontproperties=fontprop if fontprop else None)
+        ax.set_title('사이토크롬 C 단백질 서열 길이 비교', fontproperties=fontprop if fontprop else None)
+        ax.set_xticklabels(['사람', user_animal_name], fontproperties=fontprop if fontprop else None)
+        st.pyplot(fig)
+
+    # 사용자가 서열을 보고 싶을 경우 출력
+    if st.checkbox('사이토크롬 C 단백질 서열 보기'):
+        st.subheader('사람 사이토크롬 C 단백질 서열')
+        st.text(human_protein_seq)
+
+        st.subheader(f'{user_animal_name} 사이토크롬 C 단백질 서열')
+        st.text(user_animal_protein_seq)
 else:
-    st.write("서열 비교에 실패했습니다. 다시 시도해 주세요.")
-
-# 그래프 시각화
-if similarity is not None:
-    fig, ax = plt.subplots()
-    ax.bar(['사람', selected_animal_kor], [len(human_protein_seq), len(animal_protein_seq)], color=['blue', 'green'])
-    ax.set_ylabel('단백질 서열 길이', fontproperties=fontprop if fontprop else None)
-    ax.set_title('사이토크롬 C 단백질 서열 길이 비교', fontproperties=fontprop if fontprop else None)
-    ax.set_xticklabels(['사람', selected_animal_kor], fontproperties=fontprop if fontprop else None)
-    st.pyplot(fig)
-
-# 사용자가 서열을 보고 싶을 경우 출력
-if st.checkbox('사이토크롬 C 단백질 서열 보기'):
-    st.subheader('사람 사이토크롬 C 단백질 서열')
-    st.text(human_protein_seq)
-
-    st.subheader(f'{selected_animal_kor} 사이토크롬 C 단백질 서열')
-    st.text(animal_protein_seq)
+    st.write("유효한 동물 이름을 입력하고 학명을 확인하세요.")
